@@ -3,5 +3,5 @@ d 'testado': ado to perform nothing
 d Distribution-Date:   20210331
 d License: MIT
 d 
-F testado/testado.ado
-F testado/testado.sthlp
+F ./testado/testado.ado
+F ./testado/testado.sthlp
