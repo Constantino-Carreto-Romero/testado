@@ -1,15 +1,14 @@
 v 3
 d XTEVENT: Estimation of Panel Event Study
 d
-d Authors:
 d Simon Freyaldenhoven, Federal Reserve Bank of Philadelphia
 d Christian Hansen, University of Chicago
-d Jorge Pérez Pérez (maintainer), Banco de México (jorgepp@banxico.org.mx)
+d Jorge Pérez Pérez, Banco de México 
 d Jesse M. Shapiro, Harvard University
 d
 d Support:
 d https://github.com/JMSLab/xtevent/issues
-d jorgepp@banxico.org.mx
+d Jorge Pérez Pérez (jorgepp@banxico.org.mx)
 d
 d Distribution-Date: 20220624
 d License: MIT

@@ -10,5 +10,3 @@ d https://github.com/JMSLab/xtevent
 d 'xtevent': Estimation of Panel Event Study
 
 p xtevent
-p xteventplot
-p xteventtest
