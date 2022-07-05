@@ -1,4 +1,5 @@
 # xtevent
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/JMSLab/xtevent?label=last%20version)
 
 Stata package `xtevent` estimates linear panel event-study models.
 
@@ -17,7 +18,7 @@ Stata package `xtevent` estimates linear panel event-study models.
     - Add `impute` option for imputing missing values in the policy variable according to several available rules. See the help file to know more about the available imputation rules. 
     - The option `nonstaggered` has been depreciated and then in the default estimation there is no imputation of the endpoints. Instead, you can choose any of the imputation rules in the `impute` option.
     - Now the option `trend` allows for trend adjustment by either OLS or GMM.
-    - Fixed several bugs present in version 1.0.0.
+    - Fixed several bugs present in version 1.0.0
     - See [here](https://github.com/JMSLab/xtevent/releases/tag/v2.0.0)  for the whole list of updates.
 -----------
 
