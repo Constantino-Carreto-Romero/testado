@@ -1,7 +1,13 @@
-v 0.0.0
-d Materials by Constantino Carreto
-d https://github.com/Constantino-Carreto-Romero/testado
+v 3
+d Simon Freyaldenhoven, Federal Reserve Bank of Philadelphia
+d Christian Hansen, University of Chicago
+d Jorge Pérez Pérez (maintainer), Banco de México (jorgepp@banxico.org.mx)
+d Jesse M. Shapiro, Harvard University
 
-d 'testado': ado to perform nothing
+d https://github.com/JMSLab/xtevent
 
-p testado
+d 'xtevent': Estimation of Panel Event Study
+
+p xtevent
+p xteventplot
+p xteventtest
