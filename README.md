@@ -22,6 +22,7 @@ https://placehold.it/150/ffffff/ff0000?text=hello
 
 ```diff
 - text in red
+- To produce equivalent results as with xtevent 1.0.0, where the default was to impute the endpoints, the user should use impute(stag).
 + text in green
 ! text in orange
 # text in gray
