@@ -1,7 +1,0 @@
-{com}. use "https://github.com/JMSLab/xtevent/blob/main/test/example31.dta?raw=true", clear
-{txt}
-{com}. xtset i t
-{res}{txt}{col 8}panel variable:  {res}i (strongly balanced)
-{txt}{col 9}time variable:  {res}{col 25}t, 1 to 20
-{txt}{col 17}delta:  {res}1 unit
-{txt}
