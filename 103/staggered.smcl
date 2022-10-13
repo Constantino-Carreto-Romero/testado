@@ -1,0 +1,50 @@
+{com}. xtevent y x, panelvar(i) timevar(t) policyvar(z) window(3) impute(stag) 
+
+{txt}No proxy or instruments provided. Implementing OLS estimator
+{res}
+{txt}Linear regression, absorbing indicators{col 49}Number of obs{col 67}= {res}    20,000
+{txt}Absorbed variable: {bf:i}{col 49}No. of categories{col 67}= {res}     1,000
+{txt}{col 49}F({res}  28{txt},{res}  18972{txt}){col 67}= {res}   1221.97
+{txt}{col 49}Prob > F{col 67}= {res}    0.0000
+{txt}{col 49}R-squared{col 67}= {res}    0.7831
+{txt}{col 49}Adj R-squared{col 67}= {res}    0.7713
+{txt}{col 49}Root MSE{col 67}= {res}    1.0490
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}           y{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 4}_k_eq_m4 {c |}{col 14}{res}{space 2}-.4134686{col 26}{space 2} .0652957{col 37}{space 1}   -6.33{col 46}{space 3}0.000{col 54}{space 4}-.5414539{col 67}{space 3}-.2854833
+{txt}{space 4}_k_eq_m3 {c |}{col 14}{res}{space 2}-.0583756{col 26}{space 2} .0842192{col 37}{space 1}   -0.69{col 46}{space 3}0.488{col 54}{space 4}-.2234527{col 67}{space 3} .1067015
+{txt}{space 4}_k_eq_m2 {c |}{col 14}{res}{space 2}-.0563041{col 26}{space 2} .0838411{col 37}{space 1}   -0.67{col 46}{space 3}0.502{col 54}{space 4}-.2206401{col 67}{space 3} .1080319
+{txt}{space 4}_k_eq_p0 {c |}{col 14}{res}{space 2} 1.280428{col 26}{space 2} .0838822{col 37}{space 1}   15.26{col 46}{space 3}0.000{col 54}{space 4} 1.116011{col 67}{space 3} 1.444844
+{txt}{space 4}_k_eq_p1 {c |}{col 14}{res}{space 2} 1.206089{col 26}{space 2} .0851807{col 37}{space 1}   14.16{col 46}{space 3}0.000{col 54}{space 4} 1.039127{col 67}{space 3} 1.373051
+{txt}{space 4}_k_eq_p2 {c |}{col 14}{res}{space 2}  1.32568{col 26}{space 2} .0860638{col 37}{space 1}   15.40{col 46}{space 3}0.000{col 54}{space 4} 1.156988{col 67}{space 3} 1.494373
+{txt}{space 4}_k_eq_p3 {c |}{col 14}{res}{space 2} 1.336384{col 26}{space 2} .0876951{col 37}{space 1}   15.24{col 46}{space 3}0.000{col 54}{space 4} 1.164494{col 67}{space 3} 1.508274
+{txt}{space 4}_k_eq_p4 {c |}{col 14}{res}{space 2} 1.399209{col 26}{space 2} .0671338{col 37}{space 1}   20.84{col 46}{space 3}0.000{col 54}{space 4} 1.267621{col 67}{space 3} 1.530798
+{txt}{space 11}x {c |}{col 14}{res}{space 2} .0978754{col 26}{space 2} .0030018{col 37}{space 1}   32.61{col 46}{space 3}0.000{col 54}{space 4} .0919917{col 67}{space 3} .1037591
+{txt}{space 12} {c |}
+{space 11}t {c |}
+{space 10}2  {c |}{col 14}{res}{space 2} .1268162{col 26}{space 2} .0469168{col 37}{space 1}    2.70{col 46}{space 3}0.007{col 54}{space 4} .0348551{col 67}{space 3} .2187773
+{txt}{space 10}3  {c |}{col 14}{res}{space 2} .3183101{col 26}{space 2} .0469352{col 37}{space 1}    6.78{col 46}{space 3}0.000{col 54}{space 4} .2263128{col 67}{space 3} .4103073
+{txt}{space 10}4  {c |}{col 14}{res}{space 2} .5085822{col 26}{space 2} .0469588{col 37}{space 1}   10.83{col 46}{space 3}0.000{col 54}{space 4} .4165387{col 67}{space 3} .6006256
+{txt}{space 10}5  {c |}{col 14}{res}{space 2} .7345745{col 26}{space 2} .0470264{col 37}{space 1}   15.62{col 46}{space 3}0.000{col 54}{space 4} .6423987{col 67}{space 3} .8267504
+{txt}{space 10}6  {c |}{col 14}{res}{space 2} .8812613{col 26}{space 2} .0470671{col 37}{space 1}   18.72{col 46}{space 3}0.000{col 54}{space 4} .7890057{col 67}{space 3} .9735169
+{txt}{space 10}7  {c |}{col 14}{res}{space 2} 1.038901{col 26}{space 2} .0471349{col 37}{space 1}   22.04{col 46}{space 3}0.000{col 54}{space 4} .9465122{col 67}{space 3} 1.131289
+{txt}{space 10}8  {c |}{col 14}{res}{space 2} 1.305297{col 26}{space 2} .0472154{col 37}{space 1}   27.65{col 46}{space 3}0.000{col 54}{space 4} 1.212751{col 67}{space 3} 1.397844
+{txt}{space 10}9  {c |}{col 14}{res}{space 2} 1.465773{col 26}{space 2} .0472979{col 37}{space 1}   30.99{col 46}{space 3}0.000{col 54}{space 4} 1.373065{col 67}{space 3} 1.558482
+{txt}{space 9}10  {c |}{col 14}{res}{space 2} 1.698353{col 26}{space 2} .0474276{col 37}{space 1}   35.81{col 46}{space 3}0.000{col 54}{space 4} 1.605391{col 67}{space 3} 1.791316
+{txt}{space 9}11  {c |}{col 14}{res}{space 2} 1.817264{col 26}{space 2} .0475543{col 37}{space 1}   38.21{col 46}{space 3}0.000{col 54}{space 4} 1.724053{col 67}{space 3} 1.910474
+{txt}{space 9}12  {c |}{col 14}{res}{space 2} 1.978104{col 26}{space 2} .0476956{col 37}{space 1}   41.47{col 46}{space 3}0.000{col 54}{space 4} 1.884616{col 67}{space 3} 2.071592
+{txt}{space 9}13  {c |}{col 14}{res}{space 2} 2.183417{col 26}{space 2} .0478041{col 37}{space 1}   45.67{col 46}{space 3}0.000{col 54}{space 4} 2.089717{col 67}{space 3} 2.277117
+{txt}{space 9}14  {c |}{col 14}{res}{space 2}  2.33248{col 26}{space 2} .0479999{col 37}{space 1}   48.59{col 46}{space 3}0.000{col 54}{space 4} 2.238396{col 67}{space 3} 2.426564
+{txt}{space 9}15  {c |}{col 14}{res}{space 2} 2.564906{col 26}{space 2}  .048164{col 37}{space 1}   53.25{col 46}{space 3}0.000{col 54}{space 4}   2.4705{col 67}{space 3} 2.659311
+{txt}{space 9}16  {c |}{col 14}{res}{space 2} 2.777207{col 26}{space 2} .0483674{col 37}{space 1}   57.42{col 46}{space 3}0.000{col 54}{space 4} 2.682403{col 67}{space 3} 2.872012
+{txt}{space 9}17  {c |}{col 14}{res}{space 2} 2.963182{col 26}{space 2}  .048519{col 37}{space 1}   61.07{col 46}{space 3}0.000{col 54}{space 4} 2.868081{col 67}{space 3} 3.058284
+{txt}{space 9}18  {c |}{col 14}{res}{space 2} 3.124145{col 26}{space 2} .0486294{col 37}{space 1}   64.24{col 46}{space 3}0.000{col 54}{space 4} 3.028827{col 67}{space 3} 3.219462
+{txt}{space 9}19  {c |}{col 14}{res}{space 2} 3.305189{col 26}{space 2} .0486698{col 37}{space 1}   67.91{col 46}{space 3}0.000{col 54}{space 4} 3.209792{col 67}{space 3} 3.400586
+{txt}{space 9}20  {c |}{col 14}{res}{space 2} 3.518393{col 26}{space 2} .0488488{col 37}{space 1}   72.03{col 46}{space 3}0.000{col 54}{space 4} 3.422645{col 67}{space 3} 3.614141
+{txt}{space 12} {c |}
+{space 7}_cons {c |}{col 14}{res}{space 2} .6714865{col 26}{space 2} .0731586{col 37}{space 1}    9.18{col 46}{space 3}0.000{col 54}{space 4} .5280891{col 67}{space 3} .8148838
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+F test of absorbed indicators: F({res}999{txt}, {res}18972{txt}) = {res}20.923{col 62}{txt} Prob > F = {res}0.000
+{txt}
