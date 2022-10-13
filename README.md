@@ -44,7 +44,7 @@ https://placehold.it/150/ffffff/ff0000?text=hello
                 delta:  1 unit
 ```
 
-```math
+```latex
 . xtevent y x, panelvar(i) timevar(t) policyvar(z) window(3) impute(stag) 
 {\smallskip}
 No proxy or instruments provided. Implementing OLS estimator
