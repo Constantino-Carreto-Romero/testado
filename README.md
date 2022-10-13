@@ -35,3 +35,13 @@ https://placehold.it/150/ffffff/ff0000?text=hello
 ```diff
 - To produce equivalent results as with xtevent 1.0.0, where the default was to impute the endpoints, the user should use impute(stag).
 ```
+
+```math
+. use "https://github.com/JMSLab/xtevent/blob/main/test/example31.dta?raw=true", clear
+{\smallskip}
+. xtset i t
+       panel variable:  i (strongly balanced)
+        time variable:  t, 1 to 20
+                delta:  1 unit
+{\smallskip}
+```
