@@ -5,7 +5,7 @@ Program Name: seleccion de rezagos
 Dependencies:  
 ---------------------------------------------------------------------------
 Creation Date:      Jan 19, 2023 
-Modification Date:    March 13, 2023
+Modification Date:    April 13, 2023
 version:              
 References:           
 Output:             seleccion de rezagos.do
@@ -49,7 +49,7 @@ glo figures "$vacantes\figures"
 cap ssc install schemepack, replace
 
 capture log close
-log using "$log/seleccion de rezago con restriccion de desigualdad _sin_outsourcing.txt", replace text
+log using "$log/seleccion de rezago con restriccion de desigualdad _sin_outsourcing v4.txt", replace text
 
 
 /*=========================================================================
@@ -123,8 +123,8 @@ forvalues i=1/`n'{
 		sort idN T
 
 		*matriz para llenar con: AIC, BIC, suma de thetas e indicador de si no se pudo checar significancia de algún rezago 
-		matrix mat_ic = J($lo,5,.)
-		mat colnames mat_ic = max_lag AIC BIC sum_thetas no_check 
+		matrix mat_ic = J($lo,7,.)
+		mat colnames mat_ic = max_lag AIC BIC sum_thetas sum_se sum_p no_check 
 
 		*id of models with best AIC & BIC
 		*iniciarlos igual a cero 
@@ -164,7 +164,6 @@ forvalues i=1/`n'{
 			*demean lags de s y contruir elementos de la ecuacion de regresion no lineal 
 			loc restrict ""
 			loc restrict_coefs ""
-			loc other_coefs ""
 			forvalues k=1/`l'{
 				tempvar L`k's  L`k'sfm L`k'sym L`k'sd
 				sort idN T
@@ -175,7 +174,6 @@ forvalues i=1/`n'{
 				qui gen `L`k'sd'=`L`k's'-`L`k'sfm'-`L`k'sym'
 				loc variables `variables' `L`k'sd'
 				loc restrict `restrict' -invlogit({l`k'})
-				loc other_coefs `other_coefs' +invlogit({l`k'})
 				loc restrict_coefs  `restrict_coefs' +invlogit({l`k'})*`L`k'sd'
 			}
 			
@@ -248,15 +246,25 @@ forvalues i=1/`n'{
 				loc no_check=1
 			}
 			
-			*combinacion de suma the thetas (comtemporaneo y rezagos) para conocer error estandar de pi 
-			
+			*conocer error estandar de pi = suma the thetas (comtemporaneo + rezagos)  
+			estimates restore r`l'
+			cap noisily nlcom (l0:invlogit(_b[suma:_cons])), df(`df')
+			matrix sum_b=r(b)
+			matrix sum_se=r(V)
+			loc sum_se=sqrt(sum_se[1,1])
+			loc  sum_z = sum_b[1,1]/`sum_se'
+			loc sum_p=2*normal(-abs(`z'))
 			
 			
 			*agregar suma de thetas a la matriz de resultados
 			mat mat_ic[`l',4]=`thetas'
 			
+			*agregar error estandar y p-value de suma de thetas 
+			mat mat_ic[`l',5]=`sum_se'
+			mat mat_ic[`l',6]=`sum_p'
+			
 			*indicar si no se pudo checar significancia para algún coeficiente 
-			mat mat_ic[`l',5]=`no_check'
+			mat mat_ic[`l',7]=`no_check'
 			
 			*mostrar todos los coeficientes
 			di "regresion sin transformacion"
@@ -289,7 +297,7 @@ forvalues i=1/`n'{
 		mat li mat_ic
 
 		***** Say which model has the best AIC & BIC
-		cap drop max_lag AIC BIC sum_thetas no_check 
+		cap drop max_lag AIC BIC sum_thetas sum_se sum_p no_check 
 		svmat double mat_ic, names(col)
 
 		tempvar min_AIC min_BIC best_lag_aic best_lag_bic
@@ -306,8 +314,8 @@ forvalues i=1/`n'{
 
 
 		preserve 
-		keep max_lag AIC BIC best_lag_aic best_lag_bic sum_thetas no_check 
-		order max_lag AIC BIC best_lag_aic best_lag_bic sum_thetas no_check
+		keep max_lag AIC BIC best_lag_aic best_lag_bic sum_thetas sum_se sum_p no_check 
+		order max_lag AIC BIC best_lag_aic best_lag_bic sum_thetas sum_se sum_p no_check
 		keep if !missing(max_lag)
 		list
 		export delimited using "$tables/seleccion_de_rezago_con_restriccion_de_desigualdad_periodo_`a'_`b'_sin_outsourcing.csv", replace 
@@ -317,8 +325,8 @@ forvalues i=1/`n'{
 		loc bestl=r(mean)
 		estimates restore rst`bestl'
 		cd $tables
-		cap erase regresion_del_rezago_optimo_`a'_`b'_sin_outsourcing.csv
-		esttab rst`bestl' using regresion_del_rezago_optimo_`a'_`b'_sin_outsourcing.csv, replace ar2 p label
+		cap erase regresion_del_rezago_optimo_`a'_`b'_sin_outsourcing_v4.csv
+		esttab rst`bestl' using regresion_del_rezago_optimo_`a'_`b'_sin_outsourcing_v4.csv, replace ar2 p label
 		
 		
 		
