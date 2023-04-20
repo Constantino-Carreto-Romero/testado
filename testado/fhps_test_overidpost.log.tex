@@ -1,0 +1,13 @@
+. qui xtevent y_jump_m, panelvar(id) timevar(t) policyvar(z) window(5)
+{\smallskip}
+. xteventtest, overidpost(3)
+{\smallskip}
+Overidentification test for effects leveling off: 3 last post-event coefficients 
+> are equal
+{\smallskip}
+ ( 1)  - _k_eq_p5 + _k_eq_p6 = 0
+ ( 2)  - _k_eq_p4 + _k_eq_p6 = 0
+{\smallskip}
+       F(  2,  1360) =    0.35
+            Prob > F =    0.7036
+{\smallskip}

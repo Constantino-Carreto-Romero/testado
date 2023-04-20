@@ -1,0 +1,6 @@
+. qui xtevent y_jump_m x_jump_m, panelvar(id) timevar(t) policyvar(z) window(5) 
+{\smallskip}
+. qui xteventplot, ytitle("Coefficient") xtitle("Event time") ///
+> smpath(line, postwindow(5) maxiter(90) maxorder(9) technique(nr)) 
+Hessian is not positive semidefinite
+{\smallskip}

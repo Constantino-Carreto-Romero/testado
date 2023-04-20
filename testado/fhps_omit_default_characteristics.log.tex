@@ -1,0 +1,15 @@
+. qui xtevent y_jump_m x_jump_m, panelvar(id) timevar(t) policyvar(z) window(5) 
+{\smallskip}
+. xteventplot, ytitle("Coefficient") xtitle("Event time") nosupt ///
+>  nominus1label noprepval 
+{\smallskip}
+option {\bftt{nosupt}} has been specified. Sup-t confidence intervals won't be displayed o
+> r calculated
+{\smallskip}
+option {\bftt{nominus1label}} has been specified. The label for the value of the depedent 
+> variable at event-time = -1 won't be displayed
+{\smallskip}
+option {\bftt{noprepval}} has been specified. The p-value for a pretrends test won't be di
+> splayed
+{\smallskip}
+. 

@@ -1,0 +1,5 @@
+. cap drop v*
+{\smallskip}
+. qui xtevent y_jump_m x_jump_m, panelvar(id) timevar(t) policyvar(z) ///
+> window(5) savek(v, noestimate) impute(stag, saveimp) 
+{\smallskip}

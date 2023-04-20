@@ -1,0 +1,32 @@
+. xtevent y_jump_m x_jump_m, panelvar(id) timevar(t) policyvar(z) window(5) note
+{\smallskip}
+No proxy or instruments provided. Implementing OLS estimator
+{\smallskip}
+Linear regression, absorbing indicators         Number of obs     =      1,450
+Absorbed variable: {\bftt{id}}                           No. of categories =         50
+                                                F(  13,   1387)   =       5.62
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0848
+                                                Adj R-squared     =     0.0439
+                                                Root MSE          =     0.7136
+{\smallskip}
+\HLI{13}{\TOPT}\HLI{64}
+    y_jump_m {\VBAR}      Coef.   Std. Err.      t    P>|t|     [95\% Conf. Interval]
+\HLI{13}{\PLUS}\HLI{64}
+    _k_eq_m6 {\VBAR}   .2460061   .1269242     1.94   0.053    -.0029781    .4949902
+    _k_eq_m5 {\VBAR}   .3109071   .1678609     1.85   0.064    -.0183815    .6401958
+    _k_eq_m4 {\VBAR}   .0885168    .168046     0.53   0.598    -.2411349    .4181686
+    _k_eq_m3 {\VBAR}   .2000938   .1675209     1.19   0.233     -.128528    .5287155
+    _k_eq_m2 {\VBAR}   .1611297   .1664397     0.97   0.333     -.165371    .4876304
+    _k_eq_p0 {\VBAR}   .7649076   .1694303     4.51   0.000     .4325402    1.097275
+    _k_eq_p1 {\VBAR}   .7791207   .1668241     4.67   0.000     .4518658    1.106376
+    _k_eq_p2 {\VBAR}   .5403281    .169933     3.18   0.002     .2069746    .8736816
+    _k_eq_p3 {\VBAR}   .1869587   .1697555     1.10   0.271    -.1460465    .5199639
+    _k_eq_p4 {\VBAR}   .0747222   .1761269     0.42   0.671    -.2707817    .4202261
+    _k_eq_p5 {\VBAR}   .0033476   .1801176     0.02   0.985    -.3499848    .3566799
+    _k_eq_p6 {\VBAR}   .0712426   .1349414     0.53   0.598    -.1934686    .3359538
+    x_jump_m {\VBAR}   .0136369   .0350597     0.39   0.697    -.0551387    .0824126
+       _cons {\VBAR}   41.97793   .1213746   345.85   0.000     41.73983    42.21603
+\HLI{13}{\BOTT}\HLI{64}
+F test of absorbed indicators: F(49, 1387) = 0.949            Prob > F = 0.575
+{\smallskip}

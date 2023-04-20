@@ -1,0 +1,4 @@
+. qui xtevent y_r, panelvar(id) timevar(t) policyvar(z) window(5) ///
+>         proxy(x_r) proxyiv(select)
+{\smallskip}
+. xteventplot, ytitle("Coefficient") xtitle("Event time")

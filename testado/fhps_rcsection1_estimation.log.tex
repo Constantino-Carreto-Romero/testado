@@ -1,0 +1,23 @@
+. gen state=eventtime
+{\smallskip}
+. xtset, clear
+{\smallskip}
+. get_unit_time_effects y_jump_m x_jump_m, panelvar(state) timevar(t) ///
+> saving("effect_file.dta", replace)
+{\smallskip}
+Linear regression, absorbing indicators         Number of obs     =      2,000
+Absorbed variable: {\bftt{unittimeinteraction}}          No. of categories =      1,080
+                                                F(   1,    919)   =       0.59
+                                                Prob > F          =     0.4415
+                                                R-squared         =     0.5447
+                                                Adj R-squared     =     0.0096
+                                                Root MSE          =     0.7332
+{\smallskip}
+\HLI{13}{\TOPT}\HLI{64}
+    y_jump_m {\VBAR}      Coef.   Std. Err.      t    P>|t|     [95\% Conf. Interval]
+\HLI{13}{\PLUS}\HLI{64}
+    x_jump_m {\VBAR}   .0333291   .0432894     0.77   0.442    -.0516284    .1182867
+       _cons {\VBAR}   42.16666   .0219049  1924.99   0.000     42.12367    42.20965
+\HLI{13}{\BOTT}\HLI{64}
+F test of absorbed indicators: F(1079, 919) = 1.013           Prob > F = 0.420
+file effect_file.dta saved
