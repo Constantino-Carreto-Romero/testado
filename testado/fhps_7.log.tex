@@ -1,6 +1,0 @@
-. use "source/raw/examples/simulation_data_static", clear
-{\smallskip}
-. qui xtevent y_static, panelvar(id) timevar(t) policyvar(z) window(5)
-{\smallskip}
-. qui xteventplot, overlay(static) 
-{\smallskip}

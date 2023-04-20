@@ -1,4 +1,0 @@
-. qui xtevent y_r, panelvar(id) timevar(t) policyvar(z) window(5) ///
->         trend(-3, method(ols) saveoverlay)
-{\smallskip}
-. xteventplot, overlay(trend) ytitle("Coefficient") xtitle("Event time")
