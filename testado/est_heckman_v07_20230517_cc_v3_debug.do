@@ -20,21 +20,41 @@ Change log:
 
 2023/12/05	Jorge revisa y organiza
 
+2023/06/01 Constantino implementa project: 
+- el do-file "est_heckman_v07_20230517_cc_v3_debug_v4.do" se usó para estimar para los años 2006, 2012, y 2018 y el do-file "est_heckman_v07_20230517_cc_v3_debug_imputar_sigma2022_v4.do" para el año 2022. En su momento se tuvo esos dos do-files porque se usaba un valor diferente para el parámetro f en el año 2022. En este do-file (est_heckman_v07_20230517.do) se unifican esos dos do-files y se implementa project. 
+- El nombre de la base limpia de la ENOE que se cargaba se llamaba "enoe_seleccion_year_menores_var_t", ahora se llama "enoe_completa2005_t1_2022_t3_menores", pero es la misma base. Cambió el nombre porque a través del do-file "Do file para análisis de empleo (Unificación de encuestas y elaboración de cifras de empleo)_menores.do" Francisco unificó varios do-files que crean la base y el nombre de ésta cambió.
+
 ===========================================================================*/
+
+gl carpeta "\\Bmdgiesan\dgiesan\PROYECTOS\DASPERI\Salarios de Reserva"
+gl codigo "$carpeta/Code"
+gl datos "$carpeta/Data"
+
+cap project, doinfo
+if _rc {
+	capture log close
+	log using "$codigo/Est/Heckman y Frontera/est_heckman_v08_20230601.txt", replace text
+	loc pr=0
+}
+else {
+	loc pr=1
+	project, uses("$datos/Clean/enoe_completa2005_t1_2022_t3_menores.dta")	
+}
+
+
 
 * Loop sobre archivos de la ENOE
 
-*foreach z of numlist 2006 2012 2018 2022{
-foreach z of numlist 2022{
-	loc z = 2022
+foreach z of numlist 2006 2012 2018 2022 {
+	*loc z = 2022
 
 	/*=========================================================================
 							1: Importar datos
 	===========================================================================*/
 
 	clear
-	cd "\\Bmdgiesan\dgiesan\PROYECTOS\DASPERI\Salarios de Reserva\Data\Clean"
-	use enoe_seleccion_year_menores_var_t.dta if year==`z', clear
+	cd "$datos\Clean"
+	use enoe_completa2005_t1_2022_t3_menores.dta if year==`z', clear
 	
 	
 	* Reclasificar algunas localidades como urbanas (Solo para 2022)
@@ -215,7 +235,7 @@ foreach z of numlist 2022{
 	gen shouldbeins = (between15_and_64==1 & sex==2)
 	tab exp if shouldbeins, m
 	*muted by Constantino to not to interrump flow 
-	br eda ANIOS if shouldbeins & exp == .
+	*br eda ANIOS if shouldbeins & exp == .
 	*muted by Constantino because s in not defined yet
 	*tab ANIOS if s
 	tab parent_educa if shouldbeins, m
@@ -249,11 +269,8 @@ foreach z of numlist 2022{
 	predict whatcond, ycond
 	
 	* Fijar f
-	
-	*original 
-	*glo f = 0.94	
-	*cambiar por 1 para 2022
-	glo f = 1
+	if `z'==2022 glo f = 1
+	else glo f = 0.94
 	
 	* Kiefer and Neumann estimate
 	
@@ -262,9 +279,7 @@ foreach z of numlist 2022{
 	***** Probit para obtener sigma
 	
 	
-	*WARNING: en lugar del probit para 2022, se 
-	*1.- usa coeficiente del probit 2018
-	*2.- media geométrica de los coeficientes de 2006, 2012, 2018
+	*Nota: para 2022, en lugar del coeficiente del probit de ese año, se usa el de 2018 
 	
 	*original
 	probit emp what $xr $xor if between15_and_64==1 & sex==2 [fw=fac]
@@ -279,22 +294,16 @@ foreach z of numlist 2022{
 	*loc z = 2006	
 	est save "\\Bmdgiesan\dgiesan\PROYECTOS\DASPERI\Salarios de Reserva\Ster\Heckman y Frontera\probit2nd_women_ivhijosmenores_`z'.ster", replace
 	
-	*original 
-	*glo sigmahat = (1-$f)/_b[what]
-	*di $sigmahat
-**# Bookmark #1
-	
-	*modificación 1: 
-	*reemplazar coeficiente del 2022 por el del 2018
-	glo sigmahat = 0.08108108
-	di $sigmahat
-	
-	*modificación 2: 
-	*reemplazar coeficiente del 2022 por media geométrica de los anteriores
-	*loc med_geo=(0.01604278 * 0.0483871 * 0.08108108)^(1/3)
-	*di "`med_geo'"
-	*glo sigmahat = `med_geo'
-	*di $sigmahat
+	if `z'==2022{
+		*reemplazar coeficiente del 2022 por el del 2018. Por el momento se inserta manualmente, pero pendiente automatizar esto.
+		glo sigmahat = 0.08108108
+		di $sigmahat
+	}
+	else{
+		*original 
+		glo sigmahat = (1-$f)/_b[what]
+		di $sigmahat
+	}
 	
 	***************** Estimación de salario de reserva
 	
@@ -366,39 +375,31 @@ foreach z of numlist 2022{
 	*guardar solo observaciones de la muestra de estimación 
 	keep if s 
 	*guardar variables de interes
+	*keep folio_id_1 folio_id_2 emp g_estudios lnwrimputado what whatcond wrhat fac EDA12C
+	
 	keep folio_id_1 folio_id_2 emp g_estudios lnwrimputado what whatcond wrhat fac EDA12C N_HIJ eda EDA19C g_estudios a_escolaridad salario ANIOS_ESC urb jefe casado exp edadrange s
 	lab var emp "empleado"
 	lab var g_estudios "grado de estudios"
 	lab define g_est 0 "Ninguno" 1 "Preescolar" 2 "Primaria" 3 "Secundaria" 4 "Preparatoria" 5 "Normal" 6 "carrera técnica" 7 "Profesional" 8 "Maestría" 9 "Doctorado" 99 "No sabe"
 	lab values g_estudios g_est
 	tab g_est, miss
-	*muted by constantino
-	save "\\Bmdgiesan\dgiesan\PROYECTOS\DASPERI\Salarios de Reserva\Data\Clean\base_sal_reserva_`z'_what2018.dta", replace
-	*save "\\Bmdgiesan\dgiesan\PROYECTOS\DASPERI\Salarios de Reserva\Data\Clean\base_sal_reserva_`z'_med_geo.dta", replace
-	
+	*guardar base 
+	if `z'==2022{
+		save "$datos\Clean\base_sal_reserva_`z'_what2018.dta", replace
+	}
+	else{
+		save "$datos/Clean/base_sal_reserva_`z'.dta", replace 
+	}
 	
  }
 	
-	
-	
-	
-	
-	
-	glo bw = 0.1
- 
-	kdensity lnwrimputado if s [fw=fac], gen(w_d_x w_d_y) bw($bw)
-	kdensity what if s [fw=fac], gen(what1_d_x what1_d_y) bw($bw)
-	kdensity what if s & !emp [fw=fac], gen(what_noemp_d_x what_noemp_d_y) bw($bw)
-	kdensity wrhat if s & emp [fw=fac], gen(wrhat_emp_d_x wrhat_emp_d_y) bw($bw)
-	kdensity wrhat if s & !emp [fw=fac], gen(wrhat_noemp_d_x wrhat_noemp_d_y) bw($bw)
-	kdensity whatcond if s [fw=fac], gen(whatcond_d_x whatcond_d_y) bw($bw)
-	kdensity whatcond if s & !emp [fw=fac], gen(whatcond_noemp_d_x whatcond_noemp_d_y) bw($bw)
-	
-	tw (line w_d_y w_d_x) (line wrhat1_emp_d_y wrhat1_emp_d_x), legend(label(1 "Reserva empleados") label(2 "Observado"))
-	tw (line wrhat_emp_d_y wrhat_emp_d_x) (line wrhat_noemp_d_y wrhat_noemp_d_x), legend(label(1 "Reserva empleados") label(2 "Reserva no empleados"))
-	tw (line what_noemp_d_y what_noemp_d_x) (line wrhat_noemp_d_y wrhat_noemp_d_x) , legend(label(1 "Predicho") label(2 "Reserva no empleados"))
-
-	tw (line whatcond_noemp_d_y whatcond_noemp_d_x) (line wrhat_noemp_d_y wrhat_noemp_d_x) , legend(label(1 "Predicho") label(2 "Reserva no empleados"))
-	
-	
- * }
+foreach z of numlist 2006 2012 2018 2022 {
+	if `z'==2022{
+		if `pr' project, creates("$datos\Clean\base_sal_reserva_`z'_what2018.dta")
+	}
+	else{
+		if `pr' project, creates("$datos/Clean/base_sal_reserva_`z'.dta")
+	}
+}
+cap log close
+exit
