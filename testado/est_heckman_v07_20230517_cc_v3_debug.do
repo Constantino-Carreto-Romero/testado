@@ -24,9 +24,9 @@ Change log:
 
 * Loop sobre archivos de la ENOE
 
-foreach z of numlist 2006 2012 2018 {
-*foreach z of numlist 2022{
-	*loc z = 2022
+*foreach z of numlist 2006 2012 2018 2022{
+foreach z of numlist 2022{
+	loc z = 2022
 
 	/*=========================================================================
 							1: Importar datos
@@ -250,7 +250,10 @@ foreach z of numlist 2006 2012 2018 {
 	
 	* Fijar f
 	
-	glo f = 0.94	
+	*original 
+	*glo f = 0.94	
+	*cambiar por 1 para 2022
+	glo f = 1
 	
 	* Kiefer and Neumann estimate
 	
@@ -277,9 +280,21 @@ foreach z of numlist 2006 2012 2018 {
 	est save "\\Bmdgiesan\dgiesan\PROYECTOS\DASPERI\Salarios de Reserva\Ster\Heckman y Frontera\probit2nd_women_ivhijosmenores_`z'.ster", replace
 	
 	*original 
-	glo sigmahat = (1-$f)/_b[what]
+	*glo sigmahat = (1-$f)/_b[what]
+	*di $sigmahat
+**# Bookmark #1
+	
+	*modificación 1: 
+	*reemplazar coeficiente del 2022 por el del 2018
+	glo sigmahat = 0.08108108
 	di $sigmahat
 	
+	*modificación 2: 
+	*reemplazar coeficiente del 2022 por media geométrica de los anteriores
+	*loc med_geo=(0.01604278 * 0.0483871 * 0.08108108)^(1/3)
+	*di "`med_geo'"
+	*glo sigmahat = `med_geo'
+	*di $sigmahat
 	
 	***************** Estimación de salario de reserva
 	
@@ -351,8 +366,6 @@ foreach z of numlist 2006 2012 2018 {
 	*guardar solo observaciones de la muestra de estimación 
 	keep if s 
 	*guardar variables de interes
-	*keep folio_id_1 folio_id_2 emp g_estudios lnwrimputado what whatcond wrhat fac EDA12C
-	
 	keep folio_id_1 folio_id_2 emp g_estudios lnwrimputado what whatcond wrhat fac EDA12C N_HIJ eda EDA19C g_estudios a_escolaridad salario ANIOS_ESC urb jefe casado exp edadrange s
 	lab var emp "empleado"
 	lab var g_estudios "grado de estudios"
@@ -360,7 +373,8 @@ foreach z of numlist 2006 2012 2018 {
 	lab values g_estudios g_est
 	tab g_est, miss
 	*muted by constantino
-	save "\\Bmdgiesan\dgiesan\PROYECTOS\DASPERI\Salarios de Reserva\Data\Clean\base_sal_reserva_`z'.dta", replace 
+	save "\\Bmdgiesan\dgiesan\PROYECTOS\DASPERI\Salarios de Reserva\Data\Clean\base_sal_reserva_`z'_what2018.dta", replace
+	*save "\\Bmdgiesan\dgiesan\PROYECTOS\DASPERI\Salarios de Reserva\Data\Clean\base_sal_reserva_`z'_med_geo.dta", replace
 	
 	
  }
