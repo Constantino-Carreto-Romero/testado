@@ -1,16 +1,6 @@
 /*==================================================
-project:       Generar % de Vinculación
-Author:        DASPERI 
-E-email:       
-url:           
-Dependencies:  Banco de México
-----------------------------------------------------
-Creation Date:    27 Jan 2020 - 16:53:45
-Modification Date:   
-Do-file version:    01
-References:          
-Output:             
-==================================================*/
+Project: Minimum wage          
+==================================================*/ 
 
 /*==================================================
               0: Program set up
@@ -18,38 +8,37 @@ Output:
 version 15.1
 drop _all
 
-glo carpeta 	"T:\Recuadro SM-Inflacion\Proyecto\"
-glo codigo 		"$carpeta/Codigo"
-glo data		"$carpeta/Datos"
-glo figuras 	"$carpeta/Figuras"
-glo ster 		"$carpeta/Ster"
-glo tablas 		"$carpeta/Tablas"
-glo imss		"\\Bmdgiesan\dgiesan\BD\PRIVADAS\IMSS\Formato_Nuevo\stata"
-*glo imss 		"J:\stata"
+*Paths
+do "\\Bmdgiesan\DGIESAN\PROYECTOS\DASPERI\DatosInvestigación\users\Constantino\Codigos_parapublicacion_ECONLAB-rep2/rutas.do"  
+*
 
 cap project, doinfo
 if _rc {
 	capture log close
-	log using "$codigo/build_Empleo_Salarios_xSectorMunicipio.txt", replace text
 	loc pr=0
 }
 else {
 	loc pr=1
 	forvalues yyyy = 2017/2019{
 		foreach mm in 01 02 03 04 05 06 07 08 09 10 11 12{
-		    project, original("$imss/`yyyy'/imss_`mm'`yyyy'.dta") 
+		    project, original("$main_data/`yyyy'/imss_`mm'`yyyy'.dta") 
 		}
 	}
 	
-	project, original("$data/MunicipiosFronteraNorteSur.dta")
-	project, original("$data/INPC.xlsx")
+	project, original("$data_orig/MunicipiosFronteraNorteSur.dta")
+	project, original("$data_orig/INPC.xlsx")
+	*project, uses("$data/clean_main_dataxSCIAN2021.dta")
 	project, uses("$data/clean_IMSSxSCIAN2021.dta")
 	project, uses("$data/GenericoSCIAN_clean.dta")
-	project, original("${data}/Catalogos.xlsx")
+	project, original("${data_orig}/Catalogos.xlsx")
 }
-/*==================================================
-              1: Vinculados
-==================================================*/
+
+
+
+
+*/*==================================================
+*              1: Vinculados
+*==================================================*/
 use "$data/GenericoSCIAN_clean.dta" , clear
 collapse (mean) iva, by(scian)
 gen coniva = (iva  == 1)
@@ -58,10 +47,8 @@ gen mixto = (iva != 0 & iva != 1)
 tempfile clas
 save `clas'
 
-use "$imss/2018/imss_122018" , clear
-
-rename *, lower
-drop   llave_tiempo llave_modalidad llave_sexo tipo_trabajador    
+*use "$main_data/2018/main_data_122018" , clear
+use "$main_data/2018/imss_122018" , clear
 
 rename llave_municipio   municipio
 rename llave_actividad   CLAVE_CATALOGO
@@ -70,23 +57,21 @@ rename salariof          sbc
 rename llave_empleado    nss
 rename llave_empresa     registro
 
-sort registro nss 
+sort registro nss, stable
 
 drop if sbc==. | sbc==0 
 
-//tratamiento de registros duplicados al nivel de trabajador y empresa: quedarse con el de ingreso más alto (en muchos casos el sbc es el mismo).
 bysort registro nss: egen double maxsbc=max(sbc)
 keep if sbc==maxsbc
 drop maxsbc
 duplicates drop registro nss, force
-
-//Traer clasificación Frontera/No Frontera	
-merge m:1 municipio using "$data/MunicipiosFronteraNorteSur.dta"
+merge m:1 municipio using "$data_orig/MunicipiosFronteraNorteSur.dta"
 keep if _merge==3
 drop _merge
+*drop ciudad municipio_inpc inconsistenciasmain_dataINEGI_municip
 drop ciudad municipio_inpc inconsistenciasIMSSINEGI_municip
 
-//Traer clasificación SCIAN
+*merge m:1 CLAVE_CATALOGO using "$data/clean_main_dataxSCIAN2021.dta", keepusing(SCIAN3D DESCRIPCION_SCIAN_3D)
 merge m:1 CLAVE_CATALOGO using "$data/clean_IMSSxSCIAN2021.dta", keepusing(SCIAN3D DESCRIPCION_SCIAN_3D)
 keep if _merge==3
 drop _merge
@@ -107,7 +92,8 @@ replace l_novinc_alto = 1 if round(sbc,0.01)>round(236.82,0.01) & l_vinc == 0
 replace l_novinc_alto = 1 if round(sbc,0.01)>=round(236.82,0.01) & l_vinc == 0 & frontera_norte == 1 
 
 
-sort nss l_vinc
+sort nss l_vinc, stable
+
 by nss: keep if _n == _N
 preserve
 	keep if l_vinc == 1
@@ -145,9 +131,7 @@ preserve
 	save `panelnovinc'
 restore
 
-use "$imss/2019/imss_012019" , clear
-rename *, lower
-drop   llave_tiempo llave_modalidad llave_sexo tipo_trabajador    
+use "$main_data/2019/imss_012019" , clear
 
 rename llave_municipio   municipio
 rename llave_actividad   CLAVE_CATALOGO
@@ -156,11 +140,10 @@ rename salariof          sbc
 rename llave_empleado    nss
 rename llave_empresa     registro
 
-sort registro nss 
+sort registro nss, stable
 
 drop if sbc==. | sbc==0 
 
-//tratamiento de registros duplicados al nivel de trabajador y empresa: quedarse con el de ingreso más alto (en muchos casos el sbc es el mismo).
 bysort registro nss: egen double maxsbc=max(sbc)
 keep if sbc==maxsbc
 drop maxsbc
@@ -186,13 +169,12 @@ gen novinc = (_merge == 3)
 drop if _merge == 2
 drop _merge
 
-//Traer clasificación Frontera/No Frontera	
-merge m:1 municipio using "$data/MunicipiosFronteraNorteSur.dta"
+merge m:1 municipio using "$data_orig/MunicipiosFronteraNorteSur.dta"
 keep if _merge==3
 drop _merge
+*drop ciudad municipio_inpc inconsistenciasmain_dataINEGI_municip
 drop ciudad municipio_inpc inconsistenciasIMSSINEGI_municip
-
-//Traer clasificación SCIAN
+*merge m:1 CLAVE_CATALOGO using "$data/clean_main_dataxSCIAN2021.dta", keepusing(SCIAN3D DESCRIPCION_SCIAN_3D)
 merge m:1 CLAVE_CATALOGO using "$data/clean_IMSSxSCIAN2021.dta", keepusing(SCIAN3D DESCRIPCION_SCIAN_3D)
 keep if _merge==3
 drop _merge
@@ -217,19 +199,28 @@ quietly foreach type in vinc novinc vinc_alto vinc_bajo{
 		noi di "`type'  : `k'" 
 }
 
-/*==================================================
-              2: Bases IMSS
-==================================================*/
-import excel "${data}/Catalogos.xlsx" , clear first sheet("Municipios_INEGI_IMSS")
-* import excel J:\catalogos\Catalogos.xlsx, clear first sheet("Municipios_INEGI_IMSS")
+*/*==================================================
+*              2: Bases main_data
+*==================================================*/
+*import excel "${data_orig}/Catalogos.xlsx" , clear first sheet("Municipios_INEGI_main_data")
+import excel "${data_orig}/Catalogos.xlsx" , clear first sheet("Municipios_INEGI_IMSS")
+*rename LLAVE_MMM municipio
+*rename LLAVE_EEE ent
+*rename CLAVE_MMEE mun
+
 rename LLAVE_MUN municipio
 rename LLAVE_ENTIDAD ent
 rename CLAVE_MUNICIPIO_INEGI mun
+
 keep municipio ent mun
+replace mun=50 if municipio==2460
+replace mun=1  if municipio==2461
+replace mun=23 if municipio==2462
+replace mun=1  if municipio==2463
 tempfile nn
 save `nn'
 
-import excel "$data/INPC.xlsx", clear first
+import excel "$data_orig/INPC.xlsx", clear first
 gen t = mofd(Fecha)
 format t %tm
 sum INPC  if t == tm(2019m1)
@@ -238,16 +229,13 @@ keep t INPC
 tempfile precios
 save `precios'
 
-* tempfile panel panel2 panel3
 tempfile panel 
-* forvalues yyyy = 2019/2019{
-*  foreach mm in 01 {
+
 forvalues yyyy = 2017/2019{
   foreach mm in 01 02 03 04 05 06 07 08 09 10 11 12{
-	    use llave_municipio llave_actividad llave_entidad salariof llave_empleado llave_empresa using "$imss/`yyyy'/imss_`mm'`yyyy'" , clear
+	    use llave_municipio llave_actividad llave_entidad salariof llave_empleado llave_empresa using "$main_data/`yyyy'/imss_`mm'`yyyy'" , clear
 		rename *, lower
-		* drop   llave_tiempo llave_modalidad llave_sexo tipo_trabajador    
-
+		
 		rename llave_municipio   municipio
 		rename llave_actividad   CLAVE_CATALOGO 
 		rename llave_entidad     entidad
@@ -255,11 +243,10 @@ forvalues yyyy = 2017/2019{
 		rename llave_empleado    nss
 		rename llave_empresa     registro
 
-		sort registro nss 
+		sort registro nss, stable 
 
 		drop if sbc==. | sbc==0 
 
-		//tratamiento de registros duplicados al nivel de trabajador y empresa: quedarse con el de ingreso más alto (en muchos casos el sbc es el mismo).
 		bysort registro nss: egen double maxsbc=max(sbc)
 		keep if sbc==maxsbc
 		drop maxsbc
@@ -274,7 +261,7 @@ forvalues yyyy = 2017/2019{
 		merge m:1 t using `precios' , nogen keep(3)
 		replace sbc = sbc/INPC * 100
 		
-		//Traer clasificación SCIAN
+		*merge m:1 CLAVE_CATALOGO  using "$data/clean_main_dataxSCIAN2021.dta", keepusing(SCIAN3D DESCRIPCION_SCIAN_3D)
 		merge m:1 CLAVE_CATALOGO  using "$data/clean_IMSSxSCIAN2021.dta", keepusing(SCIAN3D DESCRIPCION_SCIAN_3D)
 		keep if _merge==3
 		drop _merge
@@ -284,62 +271,22 @@ forvalues yyyy = 2017/2019{
 		drop _merge
 		
 		
-		* Clasificar "vinculados" y "no vinculados"
 		if `yyyy'<=2018 gen vinc = (sbc<=176.72)
 		else gen vinc = (sbc<=230)
+
+		collapse (sum) nivel_empleo (mean) sbc_nom mean_sbc = sbc (firstnm) municipio, by(ent mun SCIAN3D vinc)
 		
-		* Colapsar empleo y salarios
-		
-		fcollapse (sum) nivel_empleo (mean) sbc_nom mean_sbc = sbc (firstnm) municipio, by(ent mun SCIAN3D vinc)
 		gen año = `yyyy'
 		gen mes = `mm'
 		cap append using `panel'
 		save `panel' , replace 		
 		
 		
-	
-		/*
-		preserve
-			collapse (sum) nivel_empleo (mean) sbc_nom mean_sbc = sbc (firstnm) municipio, by(ent mun SCIAN3D)
-			gen año = `yyyy'
-			gen mes = `mm'
-			cap append using `panel'
-			save `panel' , replace 
-		restore
-		
-		
-		preserve
-			merge m:1 nss using `panelvinc' , nogen keep(3)
-			collapse (sum) nivel_empleo_vinc=nivel_empleo (mean) sbc_nom_vinc = sbc_nom mean_sbc_vinc = sbc (firstnm) municipio, by(ent mun SCIAN3D)
-			gen año = `yyyy'
-			gen mes = `mm'
-			cap append using `panel2'
-			save `panel2' , replace 
-		restore
-		
-		preserve
-			merge m:1 nss using `panelnovinc' , nogen keep(3)
-			collapse (sum) nivel_empleo_novinc=nivel_empleo (mean) sbc_nom_novinc = sbc_nom mean_sbc_novinc = sbc (firstnm) municipio, by(ent mun SCIAN3D)
-			gen año = `yyyy'
-			gen mes = `mm'
-			cap append using `panel3'
-			save `panel3' , replace 
-		restore
-		*/
-	
-		
 	}
 }
 
 use `panel' , clear
-
-/*
-merge 1:1 ent mun SCIAN3D año mes using `panel2' , nogen
-merge 1:1 ent mun SCIAN3D año mes using `panel3' , nogen
-*/
-
-//Traer clasificación Frontera/No Frontera	
-merge m:1 municipio using "$data/MunicipiosFronteraNorteSur.dta"
+merge m:1 municipio using "$data_orig/MunicipiosFronteraNorteSur.dta"
 keep if _merge==3
 drop _merge
 drop municipio *_nombre incon
@@ -348,6 +295,9 @@ bys ent mun: egen ZLFNmax = max(ZLFN)
 replace ZLFN = ZLFNmax
 drop ZLFNmax
 
+*eliminar variables que ya no se usarán, pero dan problema al intentar el reshape por no ser constantes dentro del i() del reshape 
+cap drop ciudad 
+cap drop municipio_inpc 
 
 reshape wide nivel_empleo sbc_nom mean_sbc, i(ent mun SCIAN año mes) j(vinc)
 
@@ -368,6 +318,8 @@ foreach var in nivel_empleo sbc_nom mean_sbc {
     ren `var'0 `var'_novinc
 	ren `var'1 `var'_vinc	
 }
+
+
 
 
 save "$data/EmpleoSalariosxSectorMunicipio.dta" , replace
