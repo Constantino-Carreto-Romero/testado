@@ -3,7 +3,7 @@ program define clean_enoe_single
 
     args year trim
 
-    use folio_id CD_A ent con V_SEL N_HOG H_MUD N_REN POS_OCU lnwrimputado year sex between15_and_64 EDA12C aux_in trim PAR_C exp ANIOS_ESC ent urb fac eda g_estudios a_escolaridad rama region DUR_DES hrsocup if year==`year' & trim == "`trim'" using C:\Users\B16728\Desktop\enoe_2005_2022_comp.dta,clear
+    use folio_id CD_A ent con V_SEL N_HOG H_MUD N_REN POS_OCU lnwrimputado year sex between15_and_64 EDA12C aux_in trim PAR_C exp ANIOS_ESC ent urb fac eda g_estudios a_escolaridad rama region DUR_DES hrsocup P10_4 P10_1 P10_3 P10_2 if year==`year' & trim == "`trim'" using C:\Users\B16728\Desktop\enoe_2005_2022_comp.dta,clear
 
     ** Generar indicadores encadenados
     tostring CD_A ent con V_SEL N_HOG H_MUD N_REN,replace
@@ -63,7 +63,7 @@ program define clean_enoe_single
     drop if (lnwrimputado !=.) & !inrange(hrsocup,30,60) 
 
     ** Mujeres
-    keep if sex == 2
+    keep if sex == 1
 
     ** Quitar 1% de colas de distribución de salarios
     su lnwrimputado, d
@@ -104,7 +104,7 @@ program define clean_enoe_single
 
     compress
 
-    save "\\Bmdgiesan\DGIESAN\PROYECTOS\DASPERI\Salarios de Reserva\Data\Clean\ENOE_yeartrim\enoe_`year'_`trim'.dta", replace
+    save "\\Bmdgiesan\DGIESAN\PROYECTOS\DASPERI\Salarios de Reserva\Data\Clean\ENOE_yeartrim\enoe_`year'_`trim'_hombres.dta", replace
 
 end
 
