@@ -1397,31 +1397,33 @@ At this point we have both $v^*_2$ and $v^*_b$. Recovering $v^*_1$ using \eqref{
 \label{sec:impute}
 
 \xtevent allows for different imputations of policy variable values under different policy adoption schemes, through the \texttt{impute(type)} option.
+To illustrate this option, we use the simulated data example of section 4, and we add some missing values to the policy variable for unit 2.
 
-To illustrate this option, we use the simulated data example of section \ref{sec:examples} and show how the imputation works on the event-time dummies under the \texttt{stag} imputation scheme. For the example, we add some missing values to unit 19. Then, we differentiate the policy variable. \texttt{xtevent} uses leads and lags of the differentiated policy variable to generate the event-time dummies, following equation \eqref{eq:event_study_plot}. We ask \texttt{xtevent} to generate the event-time dummies without any imputation and specify the option \texttt{savek(stub, noestimate)} to save them without estimating the model.
+\textcolor{red}{JPP: The outputs in this section should be shorter, and the example should be similar to the one on github}
+
+Then, we generate the event-time dummies specifying the option \texttt{savek(stub, noestimate)} to save them without estimating the model.
 
 \begin{stlog}
 \input{../../output/analysis/plots/fhps_noestimate.log.tex}\nullskip
 \end{stlog}
 
-The event-time dummies with the subfix \texttt{m\#} correspond to leads of the differentiated policy variable, as described in section \ref{sec:package}. Now we display these event-time dummies for unit 19 in some periods. Notice that the event-time dummies have missing values because we are assuming nothing about the policy variable outside the observed time range.
+The event-time dummies are leads of the differentiated policy variable, as specified in equation \eqref{eq:event_study_plot}. Notice that the event-time dummies may be missing due to the missing values in the policy variable in the case of unit 2.
 
 \begin{stlog}
 \input{../../output/analysis/plots/fhps_list_et_dummies.log.tex}\nullskip
 \end{stlog}
 
-We can generate the event-time dummies and endpoints after indicating \texttt{xtevent} to impute the policy variable by the \texttt{impute(type)} option, using as imputation rule \texttt{stag}. This imputation type first will verify that the policy variable follows staggered adoption. If so, \xtevent will impute the policy variable outside the observed values. Then, it will use the imputed policy variable to generate the event-time dummies and endpoints. We add the suboption \texttt{saveimp} to save the imputed policy variable as \texttt{z\_imputed}. We also differentiate the new imputed policy variable to see how its leads translate to the new event-time dummies.
+We can generate the event-time dummies and endpoints adding the \texttt{impute(type)} option, using as imputation rule \texttt{stag}. This imputation type first will verify that the policy variable follows staggered adoption. If so, \xtevent will impute the policy variable accordingly. Then, it will use the imputed policy variable to generate the event-time dummies and endpoints. We add the suboption \texttt{saveimp} which will save the imputed policy variable as \texttt{z\_imputed}.
 
 \begin{stlog}
 \input{../../output/analysis/plots/fhps_dummies_with_imputation.log.tex}\nullskip
 \end{stlog}
 
-Now we can compare the imputed policy variable, its differentiated variable, and the event-time dummies and endpoints generated using the imputed policy variable. First, we can see that the policy variable has been imputed in the observed time range. Nonetheless, the imputation also implies that the policy variable follows a similar pattern outside the observed time range. When translating this to the event-time dummies, we can see imputed values for periods that would fall outside the observed time range.
+Now we can compare the original policy variable, the imputed policy variable, and the event-time dummies and endpoints generated using the imputed policy variable. We can see that previous missing values of unit 2 have been imputed with the value of the first observed value, that corresponds to period 3. \xtevent also imputed unobserved periods (periods before period 1, and periods after period 40). This is reflected in the event-time dummies and endpoints, which now do not have missing values.
 
 \begin{stlog}
 \input{../../output/analysis/plots/fhps_list_et_dummies_imputation.log.tex}\nullskip
 \end{stlog}
-
 
 \section{Estimation in repeated cross-sectional datasets.}
 
