@@ -40,7 +40,7 @@
 \inserttype[st0001]{article} %in brackets the SJ article id. Below, in the keywords, it will be inserted by the \inserttag command
 \author{Freyaldenhoven, Hansen, P\'erez P\'erez, Shapiro}{%
     \begin{tabular}{cc}
-    Simon Freyaldenhoven & Christian Hansen \\
+    Simon Freyaldenhoven & Christian B. Hansen \\
      Federal Reserve Bank of Philadelphia & University of Chicago \\
      Philadelphia, PA & Chicago, IL \\
      simon.freyaldenhoven@phil.frb.org & chansen1@chicagobooth.edu \\
@@ -98,11 +98,10 @@ For example, it is common to rule out effects of the policy at time $t$ on the o
 By including $L_G$ additional periods in \eqref{eq:event_study_plot}, we allow a visualization of pre-event trends (``pre-trends'') that are generally inconsistent with the model in \eqref{eq:linear}.
 Similarly, the estimating equation in \eqref{eq:event_study_plot} permits visualizing the estimated cumulative effect for an additional $L_M$ periods after the cumulative treatment effect is assumed to be constant in \eqref{eq:linear}.
 
-%\begin{remark}
 While \eqref{eq:event_study_plot} allows for general (e.g. non binary) policy variables $z_{it}$, it is instructive to consider the special case of \textit{staggered adoption}, by which we mean that the policy is binary, all units begin without the policy; and once the policy is adopted by a given unit it is never reversed.
 Then, $\Delta z_{i,t-k}$ is an indicator for whether unit $i$ adopted the policy exactly $k$ periods before period $t$,  $z_{i,t-M-L_M}$ is an indicator for whether unit $i$ adopted at least $M+L_M$ periods before period $t$, and $(1-z_{i,t+G+L_G})$ is an indicator for whether unit $i$ will adopt more than $G+L_G$ periods after period $t$.
-%\end{remark}
 
+Our package complements many other recent contributions to estimation and visualization of panel event studies in Stata. Many of these (e.g., \citep{eventddsj}; see also \citep{didmultiplegt}, \citep{didimputation}, and \citep{eventstudyinteract}) focus on the case of staggered adoption, and so by default require the user to specify a unit-specific treatment period, or to represent time relative to treatment. By contrast, our package allows for general policy variables $z_{it}$. Our package therefore allows for a default visualization in a very wide range of settings. We stress, though, that there are advantages to implementations that are designed to ensure desirable econometric properties in more specialized settings such as the one of staggered adoption. Our package incorporates one such procedure as an option.
 
 In the following section, we briefly discuss a number of estimation strategies for \eqref{eq:event_study_plot}, provide more details on how we construct the corresponding event-study plots, and introduce some additional features included in the \xtevent package.
 Then, in section \ref{sec:package}, we give a more detailed description of the syntax and options for the \texttt{xtevent} package.
@@ -1082,9 +1081,13 @@ To do this, we ask \texttt{xteventtest} to use the last two post-event coefficie
 In this case, the test suggests that the effects are not leveling off, and a model with additional post-event periods may be appropriate.
 
 %%%%%%%%%%%%%% Section 5: conclusions %%%%%%%%%%%%%
-\section{Conclusions}
-Conclusions...
+%\section{Conclusions}
+%Conclusions...
 
+\section{Acknowledgements}
+We are grateful to the many users of \texttt{xtevent} that have provided feedback. We acknowledge financial support from the National Science Foundation under Grant No. 1558636 (Hansen), from the SUPER RA Program at Harvard (Shapiro), and from Colombia Cient\'{i}fica – Alianza EFI \#60185 contract \#FP44842-220-2018, funded by The World Bank through the Scientific Ecosystems, managed by the Colombian Administrative Department of Science, Technology and Innovation (P\'{e}rez P\'{e}rez). The views expressed herein are those of the authors and do not necessarily reflect the views of the Federal Reserve Bank of Philadelphia, the Federal Reserve System, Banco de M\'exico, or the funding sources. 
+
+\textcolor{red}{Simon added the above based on our last paper - please confirm/update.}
 % discussion of the Stata Journal document class.
 %\input sj.tex
 % discussion of the Stata Press LaTeX package for Stata output.
@@ -1094,13 +1097,14 @@ Conclusions...
 \bibliography{sj}
 
 \begin{aboutauthors}
-Some background information about the first author.
+Simon Freyaldenhoven is a Senior Machine Learning Economist at the Federal Reserve Bank of Philadelphia.
 
-Some background information about the second author.
+Christian B. Hansen is the Wallace W. Booth Professor of Econometrics and Statistics at the University of Chicago Booth School of Business.
 
-Some background information about the third author.
+Jorge P\'erez P\'erez is a Research Economist at Banco de México.
 
-Some background information about the fourth author.
+Jesse M. Shapiro is the George Gund Professor of Economics and Business Administration at Harvard University and a Research Associate at the National Bureau of Economic Research.
+
 \end{aboutauthors}
 
 
@@ -1417,6 +1421,7 @@ Now we can compare the imputed policy variable, its differentiated variable, and
 \begin{stlog}
 \input{../../output/analysis/plots/fhps_list_et_dummies_imputation.log.tex}\nullskip
 \end{stlog}
+
 
 \section{Estimation in repeated cross-sectional datasets.}
 
