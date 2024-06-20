@@ -326,11 +326,11 @@ In section \ref{sec:examples}, we illustrate usage of the package in simulated d
 
 \section{Methods}\label{sec:methods}
 
-\subsection{Estimation Strategies}
+\subsection{Estimation Strategies}\label{sec:estimation}
 
 In general, identification of the parameters $\delta$ will require some form of restriction on how observable and latent variables relate to the confound $C_{it}$ and the policy $z_{it}$.
 The appropriate restriction will depend on the economic setting and typically cannot be learned from the data.
-In turn, the choice of restriction will determine what type of estimator is appropriate to estimate $\delta$ (see \citeauthor{freyaldenhoven2021visualization} \citeyear{freyaldenhoven2021visualization} for a more detailed discussion).
+In turn, the choice of restriction will determine what type of estimator is appropriate to estimate $\delta$ (see \citeauthor{freyaldenhoven2021visualizationforth} \citeyear{freyaldenhoven2021visualizationforth} for a more detailed discussion).
 The package \texttt{xtevent} includes the following estimators.
 
 \noindent \textbf{Two-way fixed effects estimator.}
@@ -345,7 +345,7 @@ These can be included in the regression using factor variables (e.g., \texttt{i.
 \noindent \textbf{Controlling for event-time trends.}
 If $C_{it}$ can be written as
 \begin{equation}\label{eq:trendextrapolation}
-  C_{it} = \tilde{\alpha}_i + \tilde{\gamma}_t + q'_{it} \tilde{\psi} + \sum_{m} \phi' f(m) z_{i,t-m}
+C_{it} = \tilde{\alpha}_i + \tilde{\gamma}_t + q'_{it} \tilde{\psi} + \sum_{m} \phi' f(m) z_{i,t-m}
 \end{equation}
 for a known set of basis functions $f(\cdot)$ and unknown parameters $\tilde{\alpha}_i, \tilde{\gamma}_t$ and $\tilde{\psi}$, then equation \eqref{eq:event_study_plot} may be estimated by including the appropriate terms from \eqref{eq:trendextrapolation} directly in a regression model, or by GMM in a second step following estimation of \eqref{eq:event_study_plot}  via two-way fixed effects.
 
@@ -358,12 +358,12 @@ We can represent this situation by taking $f(m) = 1$ if $m \in \left[-3,3\right]
 We allow $z_{it}$ to be continuous, and adoption may not be staggered.
 If equation \eqref{eq:trendextrapolation} holds, then the estimand of a standard two-way fixed effect estimator of equation \eqref{eq:event_study_plot} is given by
 \begin{equation}\label{eq:trendcases}
-  d_k =
-  \begin{cases}
-    \phi' f_k, & \mbox{if } k < -G \\
-    \delta_k + \phi' f_k, & \mbox{if } -G \leq k \leq M \\
-    \delta_M + \phi'f_k, & \mbox{otherwise},
-  \end{cases}
+d_k =
+\begin{cases}
+\phi' f_k, & \mbox{if } k < -G \\
+\delta_k + \phi' f_k, & \mbox{if } -G \leq k \leq M \\
+\delta_M + \phi'f_k, & \mbox{otherwise},
+\end{cases}
 \end{equation}
 where $f_k = \sum_{m = -\infty}^{k} f(m)$.
 
@@ -372,15 +372,15 @@ Let $T_G \leq L_G$ be the number of periods prior to $G$ used to estimate the tr
 We assume $f_k \neq 0$ for $k \in \left[-G-T_G,T_M \right]$ and $0$ otherwise.
 We can recover the trend parameters by using the $T_G$ moment conditions $\widehat{d}_k - \phi' f_k = 0$ for $k = -G - T_G,\ldots,-G-1$.
 We can then calculate an adjusted estimated event-time path $\widehat{\delta}$ that accounts for the confound by subtracting $\phi' f_k$ from the unadjusted coefficients $d_k$ for $k \in \left[-G-T_G,T_M\right]$.
-Appendix \ref{sec:app_trend} provides further details about this estimator.
+Appendix \ref{sec:app_trend} in the online supplementary material provides further details about this estimator.
 
 \noindent \textbf{IV estimation with multiple proxies.}
 If multiple additional variables are available that may serve as proxies for the confound $C_{it}$, such that
 
 \begin{equation}\label{eq:proxy}
-  x_{it} = \alpha_i^x + \gamma_t^x + \phi^x q_{it} + \Xi^x C_{it} + u_{it}
+x_{it} = \alpha_i^x + \gamma_t^x + \phi^x q_{it} + \Xi^x C_{it} + u_{it}
 \end{equation}
-with unknown parameters $\alpha_i^x, \gamma_t^x, \Xi^x$ and an unobserved vector $u_{it}$ (which is uncorrelated across proxies), then \texttt{xtevent} permits estimating equation \eqref{eq:event_study_plot} by two-stage least squares, including one of the proxies in \eqref{eq:event_study_plot}, and using the other proxy variable as an excluded instrument \citep{freyaldenhoven2019pre}.
+with unknown parameters $\alpha_i^x, \gamma_t^x, \Xi^x$ and an unobserved vector $u_{it}$ (which is uncorrelated across proxies), then \texttt{xtevent} permits estimating equation \eqref{eq:event_study_plot} by two-stage least squares, including one of the proxies in \eqref{eq:event_study_plot}, and using the other proxy variable as an excluded instrument \label{newcite_proxy} \citep{freyaldenhoven2019pre}.
 
 \noindent \textbf{IV estimation with single proxy.}
 If only a single additional variable is available that may serve as proxy for the confound $C_{it}$, with the error in equation \eqref{eq:proxy} conditionally mean-independent of the policy, then \texttt{xtevent} permits estimating equation \eqref{eq:event_study_plot} using a two-stage least squares estimator, instrumenting for the proxy with leads of the policy variable \citep{freyaldenhoven2019pre}.
@@ -393,10 +393,11 @@ The default excluded instrument for estimation of \eqref{eq:event_study_plot}. i
 \label{subsec:plots}
 
 The auxiliary command \texttt{xteventplot} includes functionality to visualize the event-study plots based on any of the estimators from the previous section.
-It further includes the enhancements to these plots suggested in \cite{freyaldenhoven2021visualization}.
+It further includes the enhancements to these plots suggested in \cite{freyaldenhoven2021visualizationforth}.
 
 \noindent \textbf{Normalization.}
-Because the policy variables in \eqref{eq:event_study_plot} are collinear, a normalization is required to identify the event-time path $\left\{ \delta_k \right\}_{k = - G - L_G - 1}^{k = M + L_M}$ \citep{schmidheiny2023event, freyaldenhoven2021visualization}.
+\label{newcite_normalization}
+Because the policy variables in \eqref{eq:event_study_plot} are collinear, a normalization is required to identify the event-time path $\left\{ \delta_k \right\}_{k = - G - L_G - 1}^{k = M + L_M}$ \citep{schmidheiny2023event, freyaldenhoven2021visualizationforth}.
 \texttt{xtevent} normalizes $\delta_{-1}=0$ by default. In the case of staggered adoption, this normalization implies that the plotted coefficients can be interpreted as estimated effects relative to the period before policy enactment.
 
 \noindent \textbf{Outcome variable level.}
@@ -405,12 +406,13 @@ For instance, in the case of staggered adoption, under our default normalization
 More generally, the label corresponds to the value $$\frac{\sum_{(i,t): \Delta z_{i,t-k^{\star}} \neq 0} y_{it}}{ \left| (i,t) : \Delta z_{i,t-k^{\star}} \neq 0 \right| }$$ where $k^{\star}$ corresponds to the normalized event-time cofficient $\delta_{k^{\star}}$.
 
 \begin{sloppypar}
-\noindent \textbf{Uniform inference.}
-In addition to standard pointwise confidence intervals for the coefficients $\delta_k$, \xtevent allows plots of uniform sup-t confidence bands \citep{freyberger2018uniform,montiel2019simultaneous}.
-Including these bands allows for visual tests of hypotheses about the entire coefficient path instead of just single coefficients. We provide details about the calculation of sup-t confidence intervals in Appendix \ref{sec:sup-t}.
+	\noindent \textbf{Uniform inference.}
+	In addition to standard pointwise confidence intervals for the coefficients $\delta_k$, \xtevent allows plots of uniform sup-t confidence bands \citep{freyberger2018uniform,montiel2019simultaneous}.
+	Including these bands allows for visual tests of hypotheses about the entire coefficient path instead of just single coefficients. We provide details about the calculation of sup-t confidence bands in Appendix \ref{sec:sup-t} in the online supplementary material.
 \end{sloppypar}
 
 \noindent \textbf{Overidentification and testing.}
+\label{newcite_pretrends2}
 The estimating equation in \eqref{eq:event_study_plot} includes $L_G$ additional periods before policy adoption to visualize potential pre-trends.
 Evidence of such pre-trends is, in practice, often seen as evidence for the presence of a confound that invalidates the research design \citep{freyaldenhoven2019pre}.
 The estimating equation in \eqref{eq:event_study_plot} also includes $L_M$ additional periods after the policy effects end to assess if the dynamic effects have leveled off after the $M$ postulated periods for which the policy has a direct effect.
@@ -422,7 +424,7 @@ To help visualize whether a confound can plausibly explain all of the event time
 Our choice of ``most plausible'' confound is the least ``wiggly'' polynomial in event-time that passes through the Wald confidence region of the event-time path.
 The idea is that if a ``smooth'' path exists, this suggests that a confound could plausibly explain the entire event time path of the outcome, even absent any policy effects.
 On the other hand, if no ``smooth'' path exists, this may indicate that a confound cannot plausibly explain the entire event-time path of the outcome and, therefore, that the policy does affect the outcome.
-We describe the computation of the least wiggly path in detail in Appendix \ref{sec:smoothest_path}.
+We describe the computation of the least wiggly path in detail in Appendix \ref{sec:smoothest_path} in the online supplementary material.
 
 \noindent \textbf{Overlay plots.}
 \xteventplot allows event-study plots with overlays in different estimation scenarios. For estimation with event-time trends, \xteventplot creates plots overlaying the trend.
@@ -430,10 +432,12 @@ For IV estimation with proxies, \xteventplot allows overlaying the dynamics impl
 \xteventplot also allows overlays of a constant-effects model to assess if the policy effects are constant over time.
 
 \subsection{Additional features}
+\label{subsec:additional_features}
 
 The package includes the following additional capabilities.
 
-\noindent \textbf{Imputation of missing values in the policy variable.}
+\noindent \textbf{Imputation of missing values in the policy variable and its leads and lags.}
+\label{newcite_sample}
 Because equation \eqref{eq:linear} includes leads and lags of the policy variable $z_{it}$ and its first difference, the estimation sample may be smaller than the entire sample available \citep{schmidheiny2023event}.
 In general, if the outcome variable is observed for $t \in \left\{\underline{t},\ldots,\overline{t} \right\}$, we need to observe the policy variable $z_{it}$ from $\underline{t} - G - L_G$ to $\overline{t} + M + L_M -1$ to avoid dropping observations from the estimation sample.
 In a typical setup, this may imply that we must restrict the estimation window to calculate the necessary leads and lags of $z_{it}$.
@@ -441,34 +445,38 @@ However, the user may have additional information that allows imputation of the 
 
 \xtevent allows for the following imputation schemes:
 \begin{enumerate}
-\item If the policy variable is declared to follow staggered adoption, \xtevent can:
-\begin{enumerate}
-\item Automatically impute any missing values in the policy variable \textit{outside} the observed data range, assuming no policy changes outside the sample period.
-For example, if we observe $z_{jt}=1$, under staggered adoption, this implies that $z_{js}=1$ for $s>t$.
-\item Automatically impute missing values of the policy variable \textit{inside} the observed data range. For example, if $z_{jt} = 1$ and $z_{j,t+2} = 1$, under staggered adoption, this implies that $z_{j,t+1} = 1$. We provide examples of this functionality in Appendix \ref{sec:impute}.
+	\item If the policy variable is declared to follow staggered adoption, \xtevent can:
+	\begin{enumerate}
+		\item Automatically impute any missing values in the policy variable \textit{outside} the observed data range, assuming no policy changes outside the sample period.
+		For example, if we observe $z_{jt}=1$, under staggered adoption, this implies that $z_{js}=1$ for $s>t$.
+		We provide an example of this functionality in section \ref{sec:examples_basic}.
+		\item Automatically impute missing values of the policy variable \textit{inside} the observed data range. For example, if $z_{jt} = 1$ and $z_{j,t+2} = 1$, under staggered adoption, this implies that $z_{j,t+1} = 1$. We provide examples of this functionality in Appendix \ref{sec:impute} in the online supplementary material.
+	\end{enumerate}
+	\item
+	Even absent staggered adoption, if the policy variable is declared not to change values outside the observed sample, \xtevent can automatically impute $z_{it}$ outside the observed sample.
+	For example, if the sample starts at $\underline{t}$ and $z_{1\underline{t}} = 0$ for unit 1, we set $z_{it} = 0$ for $t \in \{ \underline{t} - G - L_G, ..., \underline{t}-1 \}$.
 \end{enumerate}
-\item
-Even absent staggered adoption, if the policy variable is declared not to change values outside the observed sample, \xtevent can automatically impute $z_{it}$ outside the observed sample.
-For example, if the sample starts at $\underline{t}$ and $z_{1\underline{t}} = 0$ for unit 1, we set $z_{it} = 0$ for $t \in \{ \underline{t} - G - L_G, ..., \underline{t}-1 \}$.
-\end{enumerate}
+
 
 \noindent \textbf{Estimation with repeated cross-sectional data}. Some setups involve repeated cross-sectional data instead of panel data, with treatment varying at a higher level of aggregation. For example, we may have a series of repeated cross-sections of individuals for each US state $s$ and a state-level policy $z_{st}$. In this environment, estimating \eqref{eq:event_study_plot} with individual fixed effects is unfeasible, but \xtevent allows estimation of a related model with fixed effects by state:
 \begin{equation}\label{eq:repeatedcs}
-    \begin{split}
-        y_{it} = \sum_{k=-G-l_G}^{M+L_M -1}\delta_k \Delta  z_{s(i),t-k} + \delta_{M+L_M} z_{s(i),t-M-L_M} + \delta_{-G-L_G-1}(1-z_{s(i),t+G+L_G})
-        \\ \centering
-        + \alpha_{s(i)} + \gamma_{t} + q'_{it}\psi + C_{s(i)t} + \varepsilon_{it},
-    \end{split}
+\begin{split}
+y_{it} = \sum_{k=-G-l_G}^{M+L_M -1}\delta_k \Delta  z_{s(i),t-k} + \delta_{M+L_M} z_{s(i),t-M-L_M} + \delta_{-G-L_G-1}(1-z_{s(i),t+G+L_G})
+\\ \centering
++ \alpha_{s(i)} + \gamma_{t} + q'_{it}\psi + C_{s(i)t} + \varepsilon_{it},
+\end{split}
 \end{equation}
 where the parameters $\alpha_{s(i)}$ are fixed effects corresponding to state $s$ where unit $i$ belongs.
 
 An alternative \citep{amemiya1978note, hansen2007generalized} is to regress $y_{it}$ on a set of state-time indicators, plus any control variables $q_{it}$ that vary at the individual level, and then estimate \eqref{eq:event_study_plot} with the estimated state-time effects as dependent variables, and including state fixed effects, time fixed effects, and controls that vary at the state level.
-The auxiliary command \texttt{get\_unit\_time\_effects} facilitates this approach. We provide an example of this command's usage in Appendix \ref{sec:xsection}.
+The auxiliary command \texttt{get\_unit\_time\_effects} facilitates this approach.
+We provide an example of this command's usage in Appendix \ref{sec:xsection} in the online supplementary material.
 
 \textbf{Heterogeneous treatment effects in staggered adoption settings.} The model in equation \eqref{eq:linear} assumes that the causal effect of the policy is homogeneous over units $i$.
 Recent literature has highlighted that if treatment effects are heterogeneous by treatment time, then the effects estimated with equation \eqref{eq:linear} may not be properly-weighted averages of the cohort-level treatment effects \citep{athey2022design,callaway2021difference,goodman2021difference,sun2021estimating}.
 \cite{sun2021estimating} propose to estimate event studies for each treated cohort separately, comparing each one to an untreated cohort, and then to average the effects, weighting by the percentage of treated units in each cohort, to arrive at a treatment effect on the treated.
-For the two-way fixed effects case, and under staggered adoption, \texttt{xtevent} allows for estimation of cohort-by-cohort estimates, in which case it reports an average weighted by the number of treated observations in each cohort, which is an estimate of a weighted average treatment effect on the treated under assumptions discussed in \cite{sun2021estimating}. We provide an example of estimation with heterogeneous treatment effects in section \ref{sec:examples} and provide details about the estimation in Appendix \ref{sec:sunabraham}.
+For the two-way fixed effects case, and under staggered adoption, \texttt{xtevent} allows for estimation of cohort-specific effects, in which case it reports an average weighted by the number of treated observations in each cohort, which is an estimate of a weighted average treatment effect on the treated under assumptions discussed in \cite{sun2021estimating}.
+We provide an example of estimation with heterogeneous treatment effects in section \ref{sec:examples} and provide details about the estimation in Appendix \ref{sec:sunabraham}.
 
 In Appendix \ref{sec:package}, we give a more detailed description of the syntax and options for the \xtevent package.
 
