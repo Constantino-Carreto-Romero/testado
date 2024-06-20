@@ -269,7 +269,7 @@
 
 \section{Introduction}
 \label{sec:intro}
-In this article, we introduce the \texttt{xtevent} package, which enables the estimation of linear panel models with dynamic policy effects under various identifying assumptions. It further enables the construction of the corresponding event-study plots following the suggestions in \cite{freyaldenhoven2021visualization}.
+In this article, we introduce the \texttt{xtevent} package, which enables the estimation of linear panel models with dynamic policy effects under various identifying assumptions. It further enables the construction of the corresponding event-study plots following the suggestions in \cite{freyaldenhoven2021visualizationforth}.
 
 We are interested in learning the dynamic effect of a scalar policy $z_{it}$ on some outcome $y_{it}$ in an observational panel of units $i\in\{1,...,N\}$ observed in a sequence of periods $t\in\{1,...,T\}$. We consider the following model:
 \begin{align}
@@ -281,15 +281,15 @@ The parameters $\{\beta_{m}\}_{m=-G}^{M}$ encapsulate the dynamic effects of the
 Specifically, the outcome at time $t$ can be directly affected by the policy variable's value at most $M \ge 0$ periods before $t$ and at most $G \geq 0 $ periods after $t$.
 
 
-Typical event-study plots used to visualize the dynamic effects of the policy rely on the following variation of \eqref{eq:linear} (see \citeauthor{freyaldenhoven2021visualization} \citeyear{freyaldenhoven2021visualization}):
+Typical event-study plots used to visualize the dynamic effects of the policy rely on the following variation of \eqref{eq:linear} (see \citeauthor{freyaldenhoven2021visualizationforth} \citeyear{freyaldenhoven2021visualizationforth}):
 
 \begin{equation}
 \label{eq:event_study_plot}
-    \begin{split}
-        y_{it} = \sum_{k=-G-L_G}^{M+L_M -1}\delta_k \Delta  z_{i,t-k} + \delta_{M+L_M} z_{i,t-M-L_M} + \delta_{-G-L_G-1}(1-z_{i,t+G+L_G})
-        \\ \centering
-        + \alpha_{i} + \gamma_{t} + q'_{it}\psi + C_{it} + \varepsilon_{it},
-    \end{split}
+\begin{split}
+y_{it} = \sum_{k=-G-L_G}^{M+L_M -1}\delta_k \Delta  z_{i,t-k} + \delta_{M+L_M} z_{i,t-M-L_M} + \delta_{-G-L_G-1}(1-z_{i,t+G+L_G})
+\\ \centering
++ \alpha_{i} + \gamma_{t} + q'_{it}\psi + C_{it} + \varepsilon_{it},
+\end{split}
 \end{equation}
 where $\Delta$ denotes the first difference operator.
 In \eqref{eq:event_study_plot}, the parameters $\left\{ \delta_k \right\}_{k = - G - L_G - 1}^{k = M + L_M}$ measure the cumulative effect of the policy at different horizons \citep{schmidheiny2023event}.
@@ -299,6 +299,7 @@ We refer to $k$ as event-time, to the vector $\delta = (\delta_{-G - L_G -1}, \l
 
 To permit the visualization of overidentifying information, \eqref{eq:event_study_plot} includes the estimated cumulative effects of the policy at horizons outside of the range of horizons over which the policy is thought to affect the outcome.
 For example, it is common to rule out effects of the policy at time $t$ on the outcome in periods before $t$ ($G=0$).
+\label{newcite_pretrends}
 By including $L_G$ additional periods in \eqref{eq:event_study_plot}, we allow a visualization of pre-event trends (``pre-trends'') that are generally inconsistent with the model in \eqref{eq:linear}  \citep{freyaldenhoven2019pre}.
 Similarly, the estimating equation in \eqref{eq:event_study_plot} permits visualizing the estimated cumulative effect for an additional $L_M$ periods after the cumulative treatment effect is assumed to be constant in \eqref{eq:linear}.
 
@@ -306,15 +307,20 @@ While \eqref{eq:event_study_plot} allows for general (e.g., non-binary) policy v
 Then, $\Delta z_{i,t-k}$ is an indicator for whether unit $i$ adopted the policy exactly $k$ periods before period $t$,  $z_{i,t-M-L_M}$ is an indicator for whether unit $i$ adopted at least $M+L_M$ periods before period $t$, and $(1-z_{i,t+G+L_G})$ is an indicator for whether unit $i$ will adopt more than $G+L_G$ periods after period $t$.
 
 \sloppypar Our package complements many other recent contributions to estimation and visualization of panel event studies in Stata, such as \texttt{csdid} \citep{csdid}, \mbox{\texttt{did\_imputation}} \citep{didimputation}, \texttt{didmultiplegt} \citep{didmultiplegt}, \texttt{did2s} \citep{did2s}, \texttt{eventdd} \citep{eventddsj}, \mbox{\texttt{eventstudyinteract}} \citep{eventstudyinteract}, \texttt{jwdid} \citep{jwdid}, \texttt{lpdid} \citep{lpdid}, \mbox{\texttt{staggered}} \citep{staggered}, and \texttt{wooldid} \citep{wooldid}, as well as the native \mbox{\texttt{xthdidregress}} command recently introduced in Stata 18.
+Many of these focus on the case of staggered adoption, and by default, they require the user to specify a unit-specific treatment period, time relative to treatment, or an indicator for observations subject to treatment.
+By contrast, our package allows for general policy variables $z_{it}$, such as continuous variables, allowing both estimation and visualization in a wide range of settings outside staggered adoption.
+We note that our package can be used in the staggered adoption case by setting $z_{it}$ equal to a unit-period-specific indicator for periods after treatment.
 
-Many of these focus on the case of staggered adoption, and by default, they require the user to specify a unit-specific treatment period, or to represent time relative to treatment.
-By contrast, our package allows for general policy variables $z_{it}$, allowing both estimation and visualization in a wide range of settings.
-We stress, though, that there are advantages to implementations designed to ensure desirable econometric properties in more specialized settings such as the one of staggered adoption, and our package incorporates one such procedure as an option if the policy indeed follows staggered adoption.
 Our package also allows for estimation with pre-event trends using approaches based on trend extrapolation \citep{dobkin2018economic} or proxy variables \citep{freyaldenhoven2019pre}.
-Moreover, our package includes tools to enhance event-study plots and ease their interpretation, such as calculation of uniform confidence intervals and plotting of plausible confound trajectories consistent with the estimated event-time path.
+Moreover, our package includes tools to enhance event-study plots and ease their interpretation, such as calculation of uniform confidence bands and plotting of plausible confound trajectories consistent with the estimated event-time path.
+
+There are advantages to implementations designed to ensure desirable econometric properties in more specialized settings such as staggered adoption.
+Our package incorporates one such procedure as an option if the policy indeed follows staggered adoption.
+
 
 In the following section, we briefly discuss several estimation strategies for \eqref{eq:event_study_plot}, provide more details on constructing the corresponding event-study plots, and introduce some additional features of the \xtevent package.
-In section \ref{sec:examples}, we illustrate usage of the package in simulated data from \citet{freyaldenhoven2021visualization} and by estimating the effect of a tax reform using data from \citet{martinez2022mobility}. An appendix includes additional details on the implementation and functionality of the package.
+Then, in section \ref{sec:package}, we give a more detailed description of the syntax and options for the \xtevent package.
+In section \ref{sec:examples}, we illustrate usage of the package in simulated data from \citet{freyaldenhoven2021visualizationforth} and by estimating the effect of a tax reform using data from \citet{martinez2022mobility}. An appendix in the online supplementary material includes additional details on the implementation and functionality of the package.
 
 %%%%%%%%%%%%%% Section 2: methods %%%%%%%%%%%%%
 
