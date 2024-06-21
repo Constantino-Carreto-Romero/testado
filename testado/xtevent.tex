@@ -821,464 +821,12 @@ The development of tools to implement these approaches and to estimate and visua
 % muted by CC
 %\chapter*{Appendix}
 
-\section{Details on trend extrapolation}
-\label{sec:app_trend}
 
-The default method to extrapolate a linear trend uses GMM and is implemented as follows.
-Let $T_G \leq L_G$ be the number of periods prior to $G$ used to estimate the trend parameters and $T_M \leq M$ be the number of ``post-event'' periods where the trend is active.
-We assume $f_k \neq 0$ for $k \in \left[-G-T_G,T_M \right]$ and $0$ otherwise.
-We then have moments given by
-\[
-\widehat{\delta}_{k}-\phi'f_{k}=0
-\]
-for $k=-G-T_G,...,-G-1$. Let $\widehat{\delta}_{T_G}$ be the $T_{G}$-vector
-collecting $\widehat{\delta}_{k}$. Let $H_{T_G}$ be the $T_{G}\times\dim\left(\phi\right)$
-matrix whose $j^{th}$ row is $f_{k}^{'}$ for $k=j-1-G-T_{G}$.
 
-A minimum distance estimator $\widehat{\phi}$ of $\phi$ solves
-\begin{align*}
-\widehat{\phi} & =\arg\min_{\phi}\widehat{h}\left(\phi\right)'\widehat{W}\widehat{h}\left(\phi\right)\\
-\widehat{h}\left(\phi\right) & =\widehat{\delta}_{T_G}-H_{T_G}\phi.
-\end{align*}
-Solving the FOC gives
-\[
-\begin{array}{rl}
-0 & =-H_{L}^{\prime}\widehat{W}(\widehat{\delta}_{T_G}-H_{L}\widehat{\phi})\\
-\widehat{\phi} & =(H_{T_G}^{\prime}\widehat{W}H_{T_G})^{-1}H_{T_G}^{\prime}\widehat{W}\widehat{\delta}
-\end{array}
-\]
 
-Under suitable regularity conditions, we have that
-\[
-\sqrt{n}\left(\begin{array}{c}
-\widehat{\phi}-\phi_{0}\\
-\widehat{\delta}_{T_G}-\delta_{L0}
-\end{array}\right)\to N\left(0,\begin{bmatrix}\Lambda_{T_G}\Omega_{T_G}\Lambda_{T_G}^{\prime} & \Lambda_{T_G}\Omega_{T_G}\\
-\Omega_{T_G}\Lambda_{T_G}^{\prime} & \Omega_{T_G}
-\end{bmatrix}\right)
-\]
-where
-\[
-\Lambda_{T_G}=(H_{T_G}^{\prime}WH_{T_G})^{-1}H_{T_G}^{\prime}W
-\]
-and $\Omega_{T_G}$ is the asymptotic variance of $\widehat{\delta}_{T_G}$.
-The feasible efficient weighting matrix is $\widehat{W}=\widehat{\Omega}_{T_G}^{-1}\to\Omega_{T_G}^{-1}$,
-and with $W=\Omega_{T_G}^{-1}$ we have that $\Lambda_{T_G}\Omega_{T_G}\Lambda_{T_G}^{\prime}=(H_{T_G}^{\prime}\Omega_{T_G}^{-1}H_{T_G})^{-1}.$
-
-\subsection{Estimation and inference on adjusted event-time path}
-
-Now let $\widehat{\delta}$ be the vector containing the entire estimated
-event-time path, so $\dim\left(\widehat{\delta}\right)=\dim\left(\delta\right)=M+L_{M}+G+L_{G}+2$.
-Let $H$ be the $\dim\left(\delta\right)\times\dim\left(\phi\right)$
-matrix whose $j^{th}$ row is $f_{k}^{'}$ for $k=j-2-G-L_{G}$. Given
-the estimate $\widehat{\phi}$ we obtain the plugin estimate $\widehat{\delta}^{*}$
-of the adjusted event-time path by
-\[
-\widehat{\delta}^{*}=\widehat{\delta}-H\widehat{\phi}.
-\]
-Let $\Lambda=\begin{bmatrix}\boldsymbol{0} & \Lambda_{T_G} & \boldsymbol{0}\end{bmatrix}$,
-with $\boldsymbol{0}$ conformable matrices of 0s ($\dim\left(\phi\right)\times1$
-and $\dim\left(\phi\right)\times\left(\dim\left(\delta\right)-L_{G}\right)$,
-respectively), $\widehat{\Lambda}$ be its sample analogue, and $I$
-be a $\dim\left(\delta\right)\times\dim\left(\delta\right)$ identity
-matrix. Hence $\widehat{\delta}^{*}=\widehat{\delta}-H\widehat{\phi}=\left(I-H\widehat{\Lambda}\right)\widehat{\delta}$
-and it follows that (again under suitable conditions)
-\[
-\sqrt{n}\left(\widehat{\delta}^{*}-\delta_{0}^{*}\right)\to N\left(0,\Omega-H\Lambda\Omega-\Omega\Lambda^{\prime}H^{\prime}+H\Lambda\Omega\Lambda^{\prime}H^{\prime}\right)
-\]
-where $\Omega$ is the asymptotic variance matrix of $\hat{\delta}$ and
-\[
-\delta_{0,k}^{*}=\begin{cases}
-0, & k<-G\\
-\sum_{m=-G}^{k}\beta_{m}, & -G\le k\le M\\
-\sum_{m=-G}^{M}\beta_{m}, & k>M.
-\end{cases}
-\]
-Hypothesis testing for pre-trends and dynamics leveling off can
-now proceed as in the TWFE case, replacing $\widehat{\delta}$ with
-$\widehat{\delta}^{*}$.
-
-\subsection{Covariance of adjusted event-time path and coefficient on controls}
-
-For some purposes we may be interested in testing hypotheses jointly on $\left(\delta_{0}^{*},\psi_{0}\right)$.
-% Since $\widehat{\delta}$ and $\widehat{\psi}$ are estimated in the same regression. Therefore
-% we should be able to compute $\widehat{V}$ a consistent estimator
-% for $V$, where
-% \begin{align*}
-% \sqrt{n}\begin{pmatrix}\widehat{\delta}-\delta_{0}\\
-% \widehat{\psi}-\psi_{0}
-% \end{pmatrix}\to N(0,V)
-% \end{align*}
-Since $\widehat{\delta}^{*}=(I-H\widehat{\Lambda})\widehat{\delta}$, we have
-\begin{align*}
-\sqrt{n}\begin{pmatrix}\widehat{\delta}^{*}-\delta_{0}^{*}\\
-\widehat{\psi}-\psi_{0}
-\end{pmatrix}=\begin{pmatrix}I-H\widehat{\Lambda} & 0\\
-0 & I
-\end{pmatrix}\sqrt{n}\begin{pmatrix}\widehat{\delta}-\delta_{0}\\
-\widehat{\psi}-\psi_{0}
-\end{pmatrix}\to\begin{pmatrix}I-H\Lambda & 0\\
-0 & I
-\end{pmatrix}N(0,V),
-\end{align*}
-with $0$ conformable matrices of zeros ($\text{dim}(\delta)\times\text{dim}(\psi)$
-for the upper right and $\text{dim}(\psi)\times\text{dim}(\delta)$
-for the lower left) and $I$ conformable identity matrices ($\text{dim\ensuremath{\left(\delta\right)}}$
-for the upper left and $\text{dim}\left(\psi\right)$ for the lower
-right). Finally, let $\Omega_{\psi}$ denote the $\text{dim}(\psi)\times\text{dim}(\psi)$
-asymptotic variance of $\widehat{\psi}$ and $\Omega_{\delta,\psi}$
-denote the $\text{dim}(\psi)\times\text{dim}(\delta)$ asymptotic
-covariance between $\widehat{\delta},\widehat{\psi}$. We can express
-\begin{align*}
-V & =\begin{pmatrix}\Omega & \Omega_{\delta,\psi}^{\prime}\\
-\Omega_{\delta,\psi} & \Omega_{\psi}
-\end{pmatrix}
-\end{align*}
-and the asymptotic variance of $\left(\widehat{\delta}^{*},\widehat{\psi}\right)$ is
-\begin{align*}
-&
-\begin{pmatrix}I-H\Lambda & 0\\
-0 & I
-\end{pmatrix}\begin{pmatrix}\Omega & \Omega_{\delta,\psi}^{\prime}\\
-\Omega_{\delta,\psi} & \Omega_{\psi}
-\end{pmatrix}\begin{pmatrix}I-\Lambda^{\prime}H^{\prime} & 0\\
-0 & I
-\end{pmatrix}=\\
-&\begin{pmatrix}(I-H\Lambda)\Omega(I-\Lambda^{\prime}H^{\prime}) & (I-H\Lambda)\Omega_{\delta,\psi}^{\prime}\\
-\Omega_{\delta,\psi}(I-\Lambda^{\prime}H^{\prime}) & \Omega_{\psi}
-\end{pmatrix}.
-\end{align*}
-
-\section{Sup-t confidence bands}
-\label{sec:sup-t}
-
-We use sup-t bands for uniform inference (see \citet{freyberger2018uniform}, \citet{montiel2019simultaneous}, and the references therein for additional background). These bands are constructed by adding (subtracting) a constant times the vector of standard errors of $\hat{\delta}$ from $\hat{\delta}$, such that the simultaneous confidence band at each coefficient $\delta_k$ is equal to
-\begin{equation*}
-\hat{B}_k(\alpha) \equiv \left[ \hat{\delta}_k - c_\alpha \hat{\sigma}_k , \hat{\delta}_k + c_\alpha \hat{\sigma}_k  \right ]
-\end{equation*}
-for a chosen significance level $\alpha$, where $c_\alpha$ denotes the corresponding sup-t critical value.
-
-To compute $c_\alpha$, we use a simple plug-in estimator (\cite{montiel2019simultaneous}).
-\begin{enumerate}
-	\item Draw $N$ i.i.d vectors $\hat{V}^{(\ell)},\ \ell = 1,\ldots,N$ of dimension $K=\dim(\hat{\delta})$ from a multivariate normal with mean $\mathbf{0}_K$ and variance $\hat{\Omega}$ given by the estimated variance of $\hat{\delta}$.
-	\item For each replication $\ell=1,\ldots, N$, let $t_\ell=\underset{k=1,...,K}{\max} \left| \hat{\Omega}_{kk}^{-1/2} \hat{V}_k^{(\ell)} \right|$.
-	\item Set $c_\alpha = Q_{1-\alpha} \left( t_\ell \right)$, $\ell=1,\ldots, N$, where $Q$ is the quantile function.
-\end{enumerate}
-
-
-\section{Details for least wiggly path}
-\label{sec:smoothest_path}
-
-\subsection{The least wiggly path proposal}
-
-We denote the dimension of $\delta$ as $K \equiv G + M + L_G + L_M + 2$. For $v$, a finite-dimensional coefficient vector, and $k$, an integer, define the polynomial term
-\begin{align*}
-\delta_k^*(v) = \sum_{j=1}^{\dim(v)} v_j (\frac{k-s_1}{s_2})^{j-1},
-\end{align*}
-where $v_j$ denotes the $j^{\text{th}}$ element of coefficient vector $v$ and $\dim(v)$ denotes the dimension of this vector. $s_1$ and $s_2$ denote constants that shift and scale the event time (range of the polynomial).
-We set $s_1 = -G-L_G-1$ and $s_2 = M + L_M + G + L_G +2$. Let $\delta^*(v)$ collect the elements $\delta_k^*(v)$ for $-G-L_G-1 \leq k \leq M+L_M$, so that $\delta^*(v)$ reflects a polynomial path in event time with coefficients $v$.
-
-\xtevent plots the least ``wiggly'' confound whose path is contained in the Wald region $CR(\delta)$ for the event-time path of the outcome.
-Specifically, it plots $\delta^*(v^*)$, where
-
-\begin{align}
-p^* &= \min\{\dim(v): \delta^*(v) \in CR(\delta)\} \text{ and}  \label{eq:max_order} \\
-v^* &= \arg\min_{v}\{v_{p^*}^2: \dim(v)=p^*, \delta^*(v) \in CR(\delta)\}. \label{eq:min_coeff}
-\end{align}
-
-Intuitively, the Wald confidence region represents the set of event time paths for which a joint $F$-test of the observed point estimates is not rejected.
-Since this region is an ellipsis, there is no straightforward graphical illustration of this region in an event plot.
-
-To plot the least wiggly path, we solve a two-part problem.
-In \eqref{eq:max_order}, we find the smallest order $p^*$ such that a polynomial of order $p^*$ is entirely contained in the Wald region $CR(\delta)$.
-In \eqref{eq:min_coeff}, we then choose the polynomial with the lowest coefficient on the highest order term of that polynomial.
-
-In practice we normalize the event path, such that $\delta_{k} = 0$ for at least one $k$ (e.g. usually at $k=-1$).
-We will use $\mathcal{N}$ to denote the set of size $|\mathcal{N}|$ that collects all normalized coefficients, such that $\delta_{k}^*(v)=0$ for $k \in \mathcal{N}$.
-Throughout, we only consider the case $ |\mathcal{N}| \in\{1,2\}$, i.e., we allow for at most two normalizations.
-
-\subsection{Implementation}
-
-\subsubsection{Finding $p^*$}
-
-We start with the problem of finding $p^*$ in \eqref{eq:max_order}.
-We define $\Sigma$ as the covariance matrix of $\widehat \delta$ with added zeros in the rows and columns corresponding to the normalized coefficients.
-
-Since $p^*$ is generally small, it is feasible to solve \eqref{eq:max_order} iteratively as follows:
-\begin{algorithm}
-	\caption{Finding $p^*$}
-	\label{alg:find_p}
-	\begin{algorithmic}
-		\State $p^* \gets 0$
-		\State feasible $\gets$ 0
-		\While {feasible = 0}
-		\State $p^* \gets p^*+1$
-		\State feasible $\gets$ SolutionInWaldRegion($\widehat\delta,p^*,\alpha$)
-		\EndWhile
-	\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm*}
-	\begin{algorithmic}
-		\Function{SolutionInWaldRegion}{$\widehat\delta,p^*,\alpha$}
-		\State $W^*=\min_{v:dim(v)=p^*} [\delta^*(v)-\widehat{\delta}]'\Sigma^{-1}[\delta^*(v)-\widehat{\delta}] \; \text{s.t. } \delta_{k_n}^*(v)=0 \text{ for } n \in \mathcal{N}$\\
-		\Comment $\Sigma^{-1}$ denotes the generalized inverse.
-		\State \textbf{return} $\textbf{1}(W^* \le c^{1-\alpha})$\\
-		\Comment $c^{1-\alpha}$ is the $1-\alpha$ quantile of a random variable $\tau \sim \chi^2(K-|\mathcal{N}|)$.
-		\EndFunction
-	\end{algorithmic}
-\end{algorithm*}
-
-Note that $p^*$ is less than $K=\dim(\delta)$ by construction, and thus the loop in Algorithm \ref{alg:find_p} is (at least theoretically) guaranteed to converge after at most $K$ rounds.
-To ensure numerical stability, we restrict $p^*$ to be less than or equal to ten in our implementation (with a user option to reduce the upper bound further).
-If $p^{*}>10$, we conclude ``no smooth path exists."
-
-To find $W^*$ in practice, we use the first-order conditions of the minimization of the Wald statistic subject to the constraints on the normalized coefficients.
-
-To do this, we write the least wiggly path polynomial in matrix notation as $\delta^*(v) = \underset{K\times p^*}{F} \underset{p^* \times 1}{v} $, where $F_{kj} = \left(\frac{k-s_1}{s_2}\right)^{j-1}$ for $k=1, \ldots, K$.
-The rows of $F$ collect the polynomial terms for a given (shifted) event time $k$, and the vector $v$ collects the polynomial coefficients.
-The problem for finding $W^*$ can be rewritten as:
-\begin{align}
-\min_v \left[Fv-\widehat{\delta}\right]'\Sigma^{-1}\left[Fv-\widehat{\delta}\right] \text{s.t. } \delta_{k}^*(v)=0 \text{ for } k \in \mathcal{N}. \label{eq:optimization_W*}
-\end{align}
-
-From the Lagrangian, the first-order conditions are:
-\begin{align*}
-F'\Sigma^{-1}F v &=  F' \Sigma^{-1} \widehat{\delta} +\frac{1}{2} \lambda A_{norm}'\\
-A_{norm} v &= 0
-\end{align*}
-
-Here, $A_{norm}$ is the matrix with the rows of $F$ corresponding to the normalized coefficients.
-Algebra then shows that $v(\lambda)=(F'\Sigma^{-1}F)^{-1}[F' \Sigma^{-1} \widehat{\delta} + \frac{1}{2} \lambda A_{norm}']$, and plugging this back into the second first order condition above yields
-
-\begin{equation*}
-\lambda = -2[A_{norm}(F'\Sigma^{-1}F)^{-1}A_{norm}']^{-1}A_{norm}(F'\Sigma^{-1}F)^{-1} F' \Sigma^{-1} \widehat{\delta}.
-\end{equation*}
-
-Thus, the solution for $v$ is given by
-\begin{align*}
-\tilde v &= (F'\Sigma^{-1}F)^{-1} \\
-& \left[ F' \Sigma^{-1} \widehat{\delta} - A_{norm}'[A_{norm}(F'\Sigma^{-1}F)^{-1}A_{norm}']^{-1}
-A_{norm} (F'\Sigma^{-1}F)^{-1}F' \Sigma^{-1} \widehat{\delta}\right].
-\end{align*}
-
-We can write the solution for $v$ as a matrix product. Let $XX \equiv \begin{bmatrix} 2F'\Sigma^{-1}F & A_{norm}' \\ A_{norm} & \underset{|\mathcal{N}| \times |\mathcal{N}|} {\mathbf{0}} \end{bmatrix} $ and $Xy \equiv \begin{bmatrix} 2F'\Sigma^{-1}\widehat{\delta} \\ \underset{|\mathcal{N}| \times |\mathcal{N}|}{\mathbf{0}} \end{bmatrix} $. Then the solution for $v$ is the vector with the first $K$ rows of $\Tilde{v} = (XX)^{-1} Xy$.
-
-\subsubsection{Finding the optimal path given $p^*$}
-
-
-Once we have found a solution to \eqref{eq:max_order} using Algorithm \ref{alg:find_p}, the next step is to find the polynomial with the lowest coefficient on the $p^*$ term that is still contained in the Wald region (see equation \ref{eq:min_coeff}).
-First note that by construction $v^2_{p^*} \ne 0$ (If not, Algorithm \ref{alg:find_p} would have found a solution at $p^*-1$). $v^*$ can then be found through a simple constrained minimization on the vector $v$ (of dimension $p^*$):
-\begin{align}
-v^* &= \arg\min_{v} v_{p^*}^2 \label{eq:obj}\\
-\text{such that }  & [\delta^*(v)-\widehat{\delta}]\Sigma^{-1}[\delta^*(v)-\widehat{\delta}] \le c^{1-\alpha}\} \label{eq:cons1}\\
-\text{and } & \delta_{k}^*(v)=0 \text{ for } k \in \mathcal{N}, \label{eq:cons2}
-\end{align}
-with $\Sigma$ and $c^{1-\alpha}$ defined as above.
-
-First, if $p^* \le |\mathcal{N}|$, the constraint in \eqref{eq:cons2} implies that $v^*=0$ and we are done.
-Next, if $p^* > |\mathcal{N}|$, we note that $v^*$ will always be on the boundary of the Wald region.
-Thus, the constraint in \eqref{eq:cons1} will always be binding, and we can substitute both constraints directly to solve for $v^*$.
-In particular, given a set $\mathcal{N}$ of normalized coefficients and the constraint in \eqref{eq:cons1}, we can solve for some of the other coefficients.
-If $p^* > |\mathcal{N}|+1$, we use an unconstrained optimization to solve for the remaining ones after that.
-
-Specifically, partition the matrices $A_{norm}$ and $F$ into three parts as follows
-\begin{align*}
-A_{norm} &= [ \underset{|\mathcal{N}| \times (p^* - |\mathcal{N}| - 1)}{A_b}, \underset{|\mathcal{N}| \times |\mathcal{N}|}{A_1}, \underset{|\mathcal{N}| \times 1}{A_2}] \\
-F &= [\underset{K \times  (p^* - |\mathcal{N}| -1) }{F_b},\underset{K \times |\mathcal{N}| }{F_1},\underset{K \times 1}{F_2}],
-\end{align*}
-with the vector $v$ partioned accordingly into $v=[v_b; v_1; v_2]$.
-We will solve for the coefficients $v_1$ and $v_2$ using the constraints in \eqref{eq:cons2} and \eqref{eq:cons1} respectively, and then solve for the coefficients $v_b$ by unconstrained minimization.
-To do so, first note that, because $A_{norm}$ contains the rows of $F$ associated with the normalized coefficients,
-\begin{align}
-A_{norm}v =  A_b v_b + A_1 v_1 + A_2 v_2 = 0 \;\text{and thus }v_1 = {A_1}^{-1}(- A_b v_b - A_2 v_2).\label{eq:def_v1}
-\end{align}
-It follows that
-\begin{align*}
-\delta^*(v)= Fv = F_b v_b + F_1 v_1 + F_2 v_2 = F_b v_b - F_1 \big[ {A_1}^{-1}( A_b v_b + A_2 v_2)\big] + F_2 v_2,
-\end{align*}
-and the constraint in \eqref{eq:cons1} becomes
-
-%\begin{align*}
-%&\bigg[(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta} + (F_2 - F_1 {A_1}^{-1} A_2) v_2 \bigg]' \\
-%&\Sigma ^ {-1}\bigg[(F_b - F_1 {A_1}^{-1} A_b) v_b - \widehat{\delta} + (F_2 - F_1 {A_1}^{-1}A_2) v_2  \bigg] \\
-%&= c^{1 - \alpha}.
-%\end{align*}
-%Expanding this yields
-\begin{align*}
-0 = &\bigg([(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta}]' \Sigma ^ {-1} [(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta}] - c^{1 - \alpha} \bigg) \\
-&\qquad + 2 \bigg([(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta}]' \Sigma ^ {-1} [(F_2 - F_1 {A_1}^{-1} A_2) \bigg) v_2 \nonumber \\
-&\qquad +  v_2'\bigg([(F_2 - F_1 {A_1}^{-1} A_2)]'\Sigma ^ {-1} [(F_2 - F_1 {A_1}^{-1}A_2)] \bigg)v_2 .
-\end{align*}
-This is a quadratic expression for (the scalar) $v_2$ in terms of $v_b$ and, defining the scalars $d_0$, $d_1$ and $d_2$ as
-\begin{align*}
-d_0 &= \big[(F_2 - F_1 {A_1}^{-1} A_2)\big]'\Sigma ^ {-1} \big[(F_2 - F_1 {A_1}^{-1}A_2)\big], \\
-d_1(v_b) &= 2 \bigg([(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta}]' \Sigma ^ {-1} [(F_2 - F_1 {A_1}^{-1} A_2) \bigg), \text{and} \\
-d_2(v_b) &= \bigg([(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta}]' \Sigma ^ {-1} [(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta}] - c^{1 - \alpha} \bigg)
-\end{align*}
-simplifies to $d_0 v_2^2 +  d_1(v_b) v_2 + d_2 (v_b)=0$.
-
-Using the quadratic formula, we can then solve for $v_2$ by solving the minimization problem,
-\begin{align}
-\label{eq:quad_solution}
-v_2(v_b) = \dfrac{-d_1(v_b) \pm \sqrt{d_1(v_b)^2 - 4 d_0 d_2(v_b)}}{2 d_0}.
-\end{align}
-Note that, by definition, $v_2 = v_{p^*}$.
-
-Further, if $p^*= |\mathcal{N}|+1$, $v_b$ is empty and thus $v_2$ does not depend on $v_b$.
-\eqref{eq:quad_solution} results in two solutions, $v_2^+$ and $v_1^-$, corresponding to the sign ambiguity in \eqref{eq:quad_solution}.
-We choose the solution $v^*_2$ with the smaller absolute value.
-
-If $p^*> |\mathcal{N}|+1$, the constrained optimization in \eqref{eq:obj}-\eqref{eq:cons2} is equivalent to the following:
-\begin{align}
-v^2_2 =  \min_{v_b} \min_{\{+,-\}} \bigg( \dfrac{-d_1(v_b) \pm \sqrt{d_1(v_b)^2 - 4 d_0 d_2(v_b)}}{2 d_0} \bigg)^2,\label{eq:quad_solution_min}
-\end{align}
-where the inner minimization is over the sign in the quadratic formula.
-
-At this point, we have both $v^*_2$ and $v^*_b$.
-Recovering $v^*_1$ using \eqref{eq:def_v1}, we obtain $v^*=[v^*_b, v^*_1,  v^*_2]$.
-
-\section{Policy variable imputation}
-\label{sec:impute}
-
-Panel event study estimation requires assumptions about the behavior of the policy variable outside the observed time range.
-In section \ref{sec:sim} of the article, we estimated panel event studies assuming no unobserved changes in the policy variable outside the estimation period.
-This imputation scheme is implemented using the \texttt{impute(nuchange)} option.
-
-\xtevent allows for other schemes to impute the policy variable.
-For example, \xtevent can assume that the policy variable follows staggered adoption, using the \texttt{impute(stag)} option.
-It can also impute missing values of the policy variable inside the observed date range using the \texttt{impute(instag)} option.
-
-To illustrate these options, we use the simulated data example of section \ref{sec:examples} of the article and show the implied event-time dummies under the different imputation schemes.
-For the example, we add some missing values to unit 19.
-Then, we differentiate the policy variable.
-\texttt{xtevent} uses leads and lags of the differentiated policy variable to generate the event-time dummies, following equation \eqref{eq:event_study_plot}.
-
-First, we ask \texttt{xtevent} to generate the event-time dummies without any imputation and specify the option \texttt{savek(stub, noestimate)} to save them without estimating the model.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_noestimate_rmpath.log.tex}\nullskip
-\end{stlog}
-
-The event-time dummies with a ``v'' prefix and ending in \texttt{m\#} or \texttt{p\#} correspond to leads and lags of the differentiated policy variable, as described in section \ref{sec:package} of the article.
-Now, we display these event-time dummies for unit 19 in some periods.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_list_et_dummies.log.tex}\nullskip
-\end{stlog}
-
-Notice that the event-time dummies have missing values at the bottom of the table because we have not made any assumptions about the policy variable outside the observed time range.
-Besides, notice that the event-time dummies have some missing values inside the observed time range due to the missing value in the policy variable in period 35.
-From equation \eqref{eq:event_study_plot}, this latter missing value translates into two inner missing values in the event-time dummies and one missing value in the case of the left endpoint.
-
-To impute the policy variable under staggered adoption, we use the \texttt{impute(stag)} option.
-\xtevent verifies that the policy variable follows staggered adoption.
-If so, \xtevent imputes the policy variable outside the observed time range.
-Then, it uses the imputed policy variable to generate the event-time dummies and endpoints.
-We add the suboption \texttt{saveimp} to save the imputed policy variable as \texttt{z\_imputed}.
-We also differentiate the new imputed policy variable to see how its leads and lags translate to new event-time dummies.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_dummies_with_imputation.log.tex}\nullskip
-\end{stlog}
-
-Below, we compare the original policy variable, the imputed policy variable, the differentiated imputed policy variable, some event-time dummies, and the left endpoint generated using the imputed policy variable.
-First, the policy variable has been imputed in the observed time range.
-Nonetheless, the imputation also assumes that the policy variable in periods after $t=40$ would have the same value as the one in that last period.
-This imputation can be seen in the event-time dummies, which now have zeros corresponding to leads of the differentiated policy variable in periods after 40.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_list_et_dummies_imputation.log.tex}\nullskip
-\end{stlog}
-
-We now ask \texttt{xtevent} to impute the policy variable using the \texttt{impute(instag)} option.
-This imputation scheme lets us impute missing values in the policy variable outside and inside the observed time range.
-As described in section \ref{sec:package} of the article, the \texttt{impute(instag)} option implements the \texttt{impute(stag)} option, but it also imputes missing values inside the observed time range in cases where it is possible to assume some value based on the policy values in surrounding periods.
-As in the previous example, we also generate the differentiated imputed policy variable for comparison.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_dummies_with_imputation_instag.log.tex}\nullskip
-\end{stlog}
-
-Below, we compare the original policy variable, the imputed policy variable, the differentiated imputed policy variable, some event-time dummies, and the left endpoint generated with the imputed policy variable.
-First, the imputed policy variable does not have missing values inside or outside the event-time range.
-As in the example using \texttt{impute(stag)}, the event-time dummies have zeros corresponding to leads of the differentiated policy variable in periods greater than 40. Additionally, now the event-time dummies do not have missing values inside the event-time range.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_list_et_dummies_imputation_instag.log.tex}\nullskip
-\end{stlog}
-
-\section{Estimation in repeated cross-sectional datasets}
-\label{sec:xsection}
-
-\texttt{xtevent} allows estimation with repeated cross-sectional datasets when \texttt{policyvar} varies at the group level, and \texttt{panelvar} identifies the groups.
-For instance, \texttt{panelvar} could indicate states at which \texttt{policyvar} changes, while the observations in the dataset could be individuals in each state.
-\texttt{xtevent} allows estimations in these settings directly with the \texttt{repeatedcs} option.
-It also allows for using the two step procedure described in \citet{hansen2007generalized}.
-To use the latter method, the user should first use the \texttt{get\_unit\_time\_effects} command to estimate unit-time effects and then use these estimations as input for \texttt{xtevent}.
-
-We illustrate the use of \texttt{get\_unit\_time\_effects}.
-First, we create a variable \texttt{state} that represents groups where individuals receive the treatment in the same period.
-Then, we call \texttt{get\_unit\_time\_effects}.
-It saves a \texttt{dta} file with the unit-time effects.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_rcsection1_estimation_modified_rmpath.log.tex}\nullskip
-\end{stlog}
-
-Then, we keep one observation per state-time in the repeated cross-sectional data and merge the dataset with the unit-time effects.
-Afterwards, we execute \texttt{xtevent}.
-Since we use a smaller dataset to estimate the event-study, this method can be faster than using the \texttt{repeatedcs} option.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_rcsection2_estimation_modified_rmpath.log.tex}\nullskip
-\end{stlog}
-
-\section{Estimation with heterogenous treatment effects in staggered adoption settings}
-\label{sec:sunabraham}
-
-\xtevent allows estimation permitting heterogeneous treatment effects in staggered adoption settings.
-Following the approach of \cite{sun2021estimating}, we introduce a setting with heterogeneous treatment effects across treatment cohorts as follows:
-let $t^{\star} (i)$ be the cohort for unit $i$, namely, the period when unit $i$ adopts the policy.
-Denote the effects of the policy on the outcome for cohort $t^{\star}$ as $\left\{ \beta_{m,t^{\star}} \right\}_{m=-G}^M$.
-The equation for the outcome becomes:
-
-\begin{equation*}
-y_{it} =  \alpha_{i} + \gamma_{t} + q_{it}'\psi  + \sum_{m=-G}^{M}\beta_{m,t^{\star}(i)} z_{i,t-m} + C_{it} + \varepsilon_{it}.
-\end{equation*}
-
-To estimate the event-study path of the outcome in this setting, \xtevent estimates an extended version of equation \eqref{eq:event_study_plot} interacting the event-time dummies with cohort indicators as proposed in \cite{freyaldenhoven2021visualization}:
-
-\begin{equation}
-\begin{split}
-y_{it} = \sum_{c} \sum_{k=-G-L_G}^{M+L_M -1} \left(  \mathbf{1}\left\{ t^{\star} (i) = c \right\} \right) \left( \delta_{k,c} \Delta  z_{i,t-k} + \delta_{M+L_M,c} z_{i,t-M-L_M} + \delta_{-G-L_G-1,c}(1-z_{i,t+G+L_G}) \right)
-\\ \centering
-+ \alpha_{i} + \gamma_{t} + q'_{it}\psi + C_{it} + \varepsilon_{it},
-\end{split}
-\label{eq:sunabraham}
-\end{equation}
-
-Using the two-way fixed effects estimator to estimate \eqref{eq:sunabraham}, this is equivalent to the estimator proposed in \cite{sun2021estimating}. \xtevent further allows to estimate \eqref{eq:sunabraham} using any of the estimation strategies outlined in Section 2.1., except IV estimation.
-
-\xtevent estimates \eqref{eq:sunabraham} on a sample defined by the \texttt{cohort} and \texttt{control\_cohort} options.
-In staggered adoption settings, the option \texttt{cohort(create)} asks \xtevent to automatically generate a categorical variable for treatment cohorts.
-\xtevent sets the value of this categorical variable to the value of the time variable the first time a unit is treated.
-For units that are never treated, \xtevent sets the value of this variable to missing.
-Similarly, the \texttt{control\_cohort(create)} option asks \xtevent to automatically generate an indicator for the control cohort.
-\xtevent sets this indicator to 1 for never-treated units and zero otherwise.
-
-If the cohort in \texttt{control\_cohort} is a never-treated cohort, \xtevent estimates equation \eqref{eq:sunabraham} on the whole sample.
-Otherwise, \xtevent estimates \eqref{eq:sunabraham} on the subset of periods when observations in the control cohort have not yet been treated.
-By default, the estimation excludes always-treated cohorts.
-
-After obtaining estimates $\hat{\delta}_{k,c}$ for $k=-G-L_G-1,...,M+L_M$ and for each cohort $c$, \xtevent obtains the estimate of the average treatment effect at event-time $k$, $\hat{\delta}_k$, as an average of the $\hat{\delta}_{k,c}$ estimates weighting by the share of observations from cohort $c$ in each relative time $k$ \citep{sun2021estimating}:
-
-\begin{equation*}
-\hat{\delta}_k = \sum_c \delta_{k,c} \hat{Pr} \left\{ t^{\star}(i) = c \ | \ t^{\star}(i) \in [-k,T-k] \right\}.
-\end{equation*}
-The variance of $\hat{\delta}_k$ is obtained using the formulas in Appendix C.1 of \cite{sun2021estimating}.
-
-To permit greater flexibility, \xtevent also allows estimation of \eqref{eq:sunabraham} outside staggered adoption settings or in settings where the user wants to aggregate treatment cohorts for user-provided cohort and control cohort variables through the \texttt{cohort(variable varname, [,force])} and \texttt{control\_cohort(variable varname, [,force])} options.
+\section{The xtevent Package}\label{sec:package}
+The \xtevent package includes the commands \texttt{xtevent} for estimation, \texttt{xteventplot} for visualization, and \texttt{xteventtest} for postestimation hypothesis testing.
+It also includes \texttt{get\_unit\_time\_effects}, an auxiliary command to use in combination with \texttt{xtevent} in repeated cross-section settings. This section describes the syntax and options of each of these commands.
 
 \subsection{The xtevent command}
 The \texttt{xtevent} command has the following syntax:
@@ -1880,6 +1428,473 @@ The suboption \texttt{replace} overwrites the unit-time effects file.
 
 \hangpara
 \texttt{clear} replaces the dataset in memory with the unit-time effects file.
+
+
+
+
+
+
+
+
+
+\section{Details on trend extrapolation}
+\label{sec:app_trend}
+
+The default method to extrapolate a linear trend uses GMM and is implemented as follows.
+Let $T_G \leq L_G$ be the number of periods prior to $G$ used to estimate the trend parameters and $T_M \leq M$ be the number of ``post-event'' periods where the trend is active.
+We assume $f_k \neq 0$ for $k \in \left[-G-T_G,T_M \right]$ and $0$ otherwise.
+We then have moments given by
+\[
+\widehat{\delta}_{k}-\phi'f_{k}=0
+\]
+for $k=-G-T_G,...,-G-1$. Let $\widehat{\delta}_{T_G}$ be the $T_{G}$-vector
+collecting $\widehat{\delta}_{k}$. Let $H_{T_G}$ be the $T_{G}\times\dim\left(\phi\right)$
+matrix whose $j^{th}$ row is $f_{k}^{'}$ for $k=j-1-G-T_{G}$.
+
+A minimum distance estimator $\widehat{\phi}$ of $\phi$ solves
+\begin{align*}
+\widehat{\phi} & =\arg\min_{\phi}\widehat{h}\left(\phi\right)'\widehat{W}\widehat{h}\left(\phi\right)\\
+\widehat{h}\left(\phi\right) & =\widehat{\delta}_{T_G}-H_{T_G}\phi.
+\end{align*}
+Solving the FOC gives
+\[
+\begin{array}{rl}
+0 & =-H_{L}^{\prime}\widehat{W}(\widehat{\delta}_{T_G}-H_{L}\widehat{\phi})\\
+\widehat{\phi} & =(H_{T_G}^{\prime}\widehat{W}H_{T_G})^{-1}H_{T_G}^{\prime}\widehat{W}\widehat{\delta}
+\end{array}
+\]
+
+Under suitable regularity conditions, we have that
+\[
+\sqrt{n}\left(\begin{array}{c}
+\widehat{\phi}-\phi_{0}\\
+\widehat{\delta}_{T_G}-\delta_{L0}
+\end{array}\right)\to N\left(0,\begin{bmatrix}\Lambda_{T_G}\Omega_{T_G}\Lambda_{T_G}^{\prime} & \Lambda_{T_G}\Omega_{T_G}\\
+\Omega_{T_G}\Lambda_{T_G}^{\prime} & \Omega_{T_G}
+\end{bmatrix}\right)
+\]
+where
+\[
+\Lambda_{T_G}=(H_{T_G}^{\prime}WH_{T_G})^{-1}H_{T_G}^{\prime}W
+\]
+and $\Omega_{T_G}$ is the asymptotic variance of $\widehat{\delta}_{T_G}$.
+The feasible efficient weighting matrix is $\widehat{W}=\widehat{\Omega}_{T_G}^{-1}\to\Omega_{T_G}^{-1}$,
+and with $W=\Omega_{T_G}^{-1}$ we have that $\Lambda_{T_G}\Omega_{T_G}\Lambda_{T_G}^{\prime}=(H_{T_G}^{\prime}\Omega_{T_G}^{-1}H_{T_G})^{-1}.$
+
+\subsection{Estimation and inference on adjusted event-time path}
+
+Now let $\widehat{\delta}$ be the vector containing the entire estimated
+event-time path, so $\dim\left(\widehat{\delta}\right)=\dim\left(\delta\right)=M+L_{M}+G+L_{G}+2$.
+Let $H$ be the $\dim\left(\delta\right)\times\dim\left(\phi\right)$
+matrix whose $j^{th}$ row is $f_{k}^{'}$ for $k=j-2-G-L_{G}$. Given
+the estimate $\widehat{\phi}$ we obtain the plugin estimate $\widehat{\delta}^{*}$
+of the adjusted event-time path by
+\[
+\widehat{\delta}^{*}=\widehat{\delta}-H\widehat{\phi}.
+\]
+Let $\Lambda=\begin{bmatrix}\boldsymbol{0} & \Lambda_{T_G} & \boldsymbol{0}\end{bmatrix}$,
+with $\boldsymbol{0}$ conformable matrices of 0s ($\dim\left(\phi\right)\times1$
+and $\dim\left(\phi\right)\times\left(\dim\left(\delta\right)-L_{G}\right)$,
+respectively), $\widehat{\Lambda}$ be its sample analogue, and $I$
+be a $\dim\left(\delta\right)\times\dim\left(\delta\right)$ identity
+matrix. Hence $\widehat{\delta}^{*}=\widehat{\delta}-H\widehat{\phi}=\left(I-H\widehat{\Lambda}\right)\widehat{\delta}$
+and it follows that (again under suitable conditions)
+\[
+\sqrt{n}\left(\widehat{\delta}^{*}-\delta_{0}^{*}\right)\to N\left(0,\Omega-H\Lambda\Omega-\Omega\Lambda^{\prime}H^{\prime}+H\Lambda\Omega\Lambda^{\prime}H^{\prime}\right)
+\]
+where $\Omega$ is the asymptotic variance matrix of $\hat{\delta}$ and
+\[
+\delta_{0,k}^{*}=\begin{cases}
+0, & k<-G\\
+\sum_{m=-G}^{k}\beta_{m}, & -G\le k\le M\\
+\sum_{m=-G}^{M}\beta_{m}, & k>M.
+\end{cases}
+\]
+Hypothesis testing for pre-trends and dynamics leveling off can
+now proceed as in the TWFE case, replacing $\widehat{\delta}$ with
+$\widehat{\delta}^{*}$.
+
+\subsection{Covariance of adjusted event-time path and coefficient on controls}
+
+For some purposes we may be interested in testing hypotheses jointly on $\left(\delta_{0}^{*},\psi_{0}\right)$.
+% Since $\widehat{\delta}$ and $\widehat{\psi}$ are estimated in the same regression. Therefore
+% we should be able to compute $\widehat{V}$ a consistent estimator
+% for $V$, where
+% \begin{align*}
+% \sqrt{n}\begin{pmatrix}\widehat{\delta}-\delta_{0}\\
+% \widehat{\psi}-\psi_{0}
+% \end{pmatrix}\to N(0,V)
+% \end{align*}
+Since $\widehat{\delta}^{*}=(I-H\widehat{\Lambda})\widehat{\delta}$, we have
+\begin{align*}
+\sqrt{n}\begin{pmatrix}\widehat{\delta}^{*}-\delta_{0}^{*}\\
+\widehat{\psi}-\psi_{0}
+\end{pmatrix}=\begin{pmatrix}I-H\widehat{\Lambda} & 0\\
+0 & I
+\end{pmatrix}\sqrt{n}\begin{pmatrix}\widehat{\delta}-\delta_{0}\\
+\widehat{\psi}-\psi_{0}
+\end{pmatrix}\to\begin{pmatrix}I-H\Lambda & 0\\
+0 & I
+\end{pmatrix}N(0,V),
+\end{align*}
+with $0$ conformable matrices of zeros ($\text{dim}(\delta)\times\text{dim}(\psi)$
+for the upper right and $\text{dim}(\psi)\times\text{dim}(\delta)$
+for the lower left) and $I$ conformable identity matrices ($\text{dim\ensuremath{\left(\delta\right)}}$
+for the upper left and $\text{dim}\left(\psi\right)$ for the lower
+right). Finally, let $\Omega_{\psi}$ denote the $\text{dim}(\psi)\times\text{dim}(\psi)$
+asymptotic variance of $\widehat{\psi}$ and $\Omega_{\delta,\psi}$
+denote the $\text{dim}(\psi)\times\text{dim}(\delta)$ asymptotic
+covariance between $\widehat{\delta},\widehat{\psi}$. We can express
+\begin{align*}
+V & =\begin{pmatrix}\Omega & \Omega_{\delta,\psi}^{\prime}\\
+\Omega_{\delta,\psi} & \Omega_{\psi}
+\end{pmatrix}
+\end{align*}
+and the asymptotic variance of $\left(\widehat{\delta}^{*},\widehat{\psi}\right)$ is
+\begin{align*}
+&
+\begin{pmatrix}I-H\Lambda & 0\\
+0 & I
+\end{pmatrix}\begin{pmatrix}\Omega & \Omega_{\delta,\psi}^{\prime}\\
+\Omega_{\delta,\psi} & \Omega_{\psi}
+\end{pmatrix}\begin{pmatrix}I-\Lambda^{\prime}H^{\prime} & 0\\
+0 & I
+\end{pmatrix}=\\
+&\begin{pmatrix}(I-H\Lambda)\Omega(I-\Lambda^{\prime}H^{\prime}) & (I-H\Lambda)\Omega_{\delta,\psi}^{\prime}\\
+\Omega_{\delta,\psi}(I-\Lambda^{\prime}H^{\prime}) & \Omega_{\psi}
+\end{pmatrix}.
+\end{align*}
+
+\section{Sup-t confidence bands}
+\label{sec:sup-t}
+
+We use sup-t bands for uniform inference (see \citet{freyberger2018uniform}, \citet{montiel2019simultaneous}, and the references therein for additional background). These bands are constructed by adding (subtracting) a constant times the vector of standard errors of $\hat{\delta}$ from $\hat{\delta}$, such that the simultaneous confidence band at each coefficient $\delta_k$ is equal to
+\begin{equation*}
+\hat{B}_k(\alpha) \equiv \left[ \hat{\delta}_k - c_\alpha \hat{\sigma}_k , \hat{\delta}_k + c_\alpha \hat{\sigma}_k  \right ]
+\end{equation*}
+for a chosen significance level $\alpha$, where $c_\alpha$ denotes the corresponding sup-t critical value.
+
+To compute $c_\alpha$, we use a simple plug-in estimator (\cite{montiel2019simultaneous}).
+\begin{enumerate}
+	\item Draw $N$ i.i.d vectors $\hat{V}^{(\ell)},\ \ell = 1,\ldots,N$ of dimension $K=\dim(\hat{\delta})$ from a multivariate normal with mean $\mathbf{0}_K$ and variance $\hat{\Omega}$ given by the estimated variance of $\hat{\delta}$.
+	\item For each replication $\ell=1,\ldots, N$, let $t_\ell=\underset{k=1,...,K}{\max} \left| \hat{\Omega}_{kk}^{-1/2} \hat{V}_k^{(\ell)} \right|$.
+	\item Set $c_\alpha = Q_{1-\alpha} \left( t_\ell \right)$, $\ell=1,\ldots, N$, where $Q$ is the quantile function.
+\end{enumerate}
+
+
+\section{Details for least wiggly path}
+\label{sec:smoothest_path}
+
+\subsection{The least wiggly path proposal}
+
+We denote the dimension of $\delta$ as $K \equiv G + M + L_G + L_M + 2$. For $v$, a finite-dimensional coefficient vector, and $k$, an integer, define the polynomial term
+\begin{align*}
+\delta_k^*(v) = \sum_{j=1}^{\dim(v)} v_j (\frac{k-s_1}{s_2})^{j-1},
+\end{align*}
+where $v_j$ denotes the $j^{\text{th}}$ element of coefficient vector $v$ and $\dim(v)$ denotes the dimension of this vector. $s_1$ and $s_2$ denote constants that shift and scale the event time (range of the polynomial).
+We set $s_1 = -G-L_G-1$ and $s_2 = M + L_M + G + L_G +2$. Let $\delta^*(v)$ collect the elements $\delta_k^*(v)$ for $-G-L_G-1 \leq k \leq M+L_M$, so that $\delta^*(v)$ reflects a polynomial path in event time with coefficients $v$.
+
+\xtevent plots the least ``wiggly'' confound whose path is contained in the Wald region $CR(\delta)$ for the event-time path of the outcome.
+Specifically, it plots $\delta^*(v^*)$, where
+
+\begin{align}
+p^* &= \min\{\dim(v): \delta^*(v) \in CR(\delta)\} \text{ and}  \label{eq:max_order} \\
+v^* &= \arg\min_{v}\{v_{p^*}^2: \dim(v)=p^*, \delta^*(v) \in CR(\delta)\}. \label{eq:min_coeff}
+\end{align}
+
+Intuitively, the Wald confidence region represents the set of event time paths for which a joint $F$-test of the observed point estimates is not rejected.
+Since this region is an ellipsis, there is no straightforward graphical illustration of this region in an event plot.
+
+To plot the least wiggly path, we solve a two-part problem.
+In \eqref{eq:max_order}, we find the smallest order $p^*$ such that a polynomial of order $p^*$ is entirely contained in the Wald region $CR(\delta)$.
+In \eqref{eq:min_coeff}, we then choose the polynomial with the lowest coefficient on the highest order term of that polynomial.
+
+In practice we normalize the event path, such that $\delta_{k} = 0$ for at least one $k$ (e.g. usually at $k=-1$).
+We will use $\mathcal{N}$ to denote the set of size $|\mathcal{N}|$ that collects all normalized coefficients, such that $\delta_{k}^*(v)=0$ for $k \in \mathcal{N}$.
+Throughout, we only consider the case $ |\mathcal{N}| \in\{1,2\}$, i.e., we allow for at most two normalizations.
+
+\subsection{Implementation}
+
+\subsubsection{Finding $p^*$}
+
+We start with the problem of finding $p^*$ in \eqref{eq:max_order}.
+We define $\Sigma$ as the covariance matrix of $\widehat \delta$ with added zeros in the rows and columns corresponding to the normalized coefficients.
+
+Since $p^*$ is generally small, it is feasible to solve \eqref{eq:max_order} iteratively as follows:
+\begin{algorithm}
+	\caption{Finding $p^*$}
+	\label{alg:find_p}
+	\begin{algorithmic}
+		\State $p^* \gets 0$
+		\State feasible $\gets$ 0
+		\While {feasible = 0}
+		\State $p^* \gets p^*+1$
+		\State feasible $\gets$ SolutionInWaldRegion($\widehat\delta,p^*,\alpha$)
+		\EndWhile
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm*}
+	\begin{algorithmic}
+		\Function{SolutionInWaldRegion}{$\widehat\delta,p^*,\alpha$}
+		\State $W^*=\min_{v:dim(v)=p^*} [\delta^*(v)-\widehat{\delta}]'\Sigma^{-1}[\delta^*(v)-\widehat{\delta}] \; \text{s.t. } \delta_{k_n}^*(v)=0 \text{ for } n \in \mathcal{N}$\\
+		\Comment $\Sigma^{-1}$ denotes the generalized inverse.
+		\State \textbf{return} $\textbf{1}(W^* \le c^{1-\alpha})$\\
+		\Comment $c^{1-\alpha}$ is the $1-\alpha$ quantile of a random variable $\tau \sim \chi^2(K-|\mathcal{N}|)$.
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm*}
+
+Note that $p^*$ is less than $K=\dim(\delta)$ by construction, and thus the loop in Algorithm \ref{alg:find_p} is (at least theoretically) guaranteed to converge after at most $K$ rounds.
+To ensure numerical stability, we restrict $p^*$ to be less than or equal to ten in our implementation (with a user option to reduce the upper bound further).
+If $p^{*}>10$, we conclude ``no smooth path exists."
+
+To find $W^*$ in practice, we use the first-order conditions of the minimization of the Wald statistic subject to the constraints on the normalized coefficients.
+
+To do this, we write the least wiggly path polynomial in matrix notation as $\delta^*(v) = \underset{K\times p^*}{F} \underset{p^* \times 1}{v} $, where $F_{kj} = \left(\frac{k-s_1}{s_2}\right)^{j-1}$ for $k=1, \ldots, K$.
+The rows of $F$ collect the polynomial terms for a given (shifted) event time $k$, and the vector $v$ collects the polynomial coefficients.
+The problem for finding $W^*$ can be rewritten as:
+\begin{align}
+\min_v \left[Fv-\widehat{\delta}\right]'\Sigma^{-1}\left[Fv-\widehat{\delta}\right] \text{s.t. } \delta_{k}^*(v)=0 \text{ for } k \in \mathcal{N}. \label{eq:optimization_W*}
+\end{align}
+
+From the Lagrangian, the first-order conditions are:
+\begin{align*}
+F'\Sigma^{-1}F v &=  F' \Sigma^{-1} \widehat{\delta} +\frac{1}{2} \lambda A_{norm}'\\
+A_{norm} v &= 0
+\end{align*}
+
+Here, $A_{norm}$ is the matrix with the rows of $F$ corresponding to the normalized coefficients.
+Algebra then shows that $v(\lambda)=(F'\Sigma^{-1}F)^{-1}[F' \Sigma^{-1} \widehat{\delta} + \frac{1}{2} \lambda A_{norm}']$, and plugging this back into the second first order condition above yields
+
+\begin{equation*}
+\lambda = -2[A_{norm}(F'\Sigma^{-1}F)^{-1}A_{norm}']^{-1}A_{norm}(F'\Sigma^{-1}F)^{-1} F' \Sigma^{-1} \widehat{\delta}.
+\end{equation*}
+
+Thus, the solution for $v$ is given by
+\begin{align*}
+\tilde v &= (F'\Sigma^{-1}F)^{-1} \\
+& \left[ F' \Sigma^{-1} \widehat{\delta} - A_{norm}'[A_{norm}(F'\Sigma^{-1}F)^{-1}A_{norm}']^{-1}
+A_{norm} (F'\Sigma^{-1}F)^{-1}F' \Sigma^{-1} \widehat{\delta}\right].
+\end{align*}
+
+We can write the solution for $v$ as a matrix product. Let $XX \equiv \begin{bmatrix} 2F'\Sigma^{-1}F & A_{norm}' \\ A_{norm} & \underset{|\mathcal{N}| \times |\mathcal{N}|} {\mathbf{0}} \end{bmatrix} $ and $Xy \equiv \begin{bmatrix} 2F'\Sigma^{-1}\widehat{\delta} \\ \underset{|\mathcal{N}| \times |\mathcal{N}|}{\mathbf{0}} \end{bmatrix} $. Then the solution for $v$ is the vector with the first $K$ rows of $\Tilde{v} = (XX)^{-1} Xy$.
+
+\subsubsection{Finding the optimal path given $p^*$}
+
+
+Once we have found a solution to \eqref{eq:max_order} using Algorithm \ref{alg:find_p}, the next step is to find the polynomial with the lowest coefficient on the $p^*$ term that is still contained in the Wald region (see equation \ref{eq:min_coeff}).
+First note that by construction $v^2_{p^*} \ne 0$ (If not, Algorithm \ref{alg:find_p} would have found a solution at $p^*-1$). $v^*$ can then be found through a simple constrained minimization on the vector $v$ (of dimension $p^*$):
+\begin{align}
+v^* &= \arg\min_{v} v_{p^*}^2 \label{eq:obj}\\
+\text{such that }  & [\delta^*(v)-\widehat{\delta}]\Sigma^{-1}[\delta^*(v)-\widehat{\delta}] \le c^{1-\alpha}\} \label{eq:cons1}\\
+\text{and } & \delta_{k}^*(v)=0 \text{ for } k \in \mathcal{N}, \label{eq:cons2}
+\end{align}
+with $\Sigma$ and $c^{1-\alpha}$ defined as above.
+
+First, if $p^* \le |\mathcal{N}|$, the constraint in \eqref{eq:cons2} implies that $v^*=0$ and we are done.
+Next, if $p^* > |\mathcal{N}|$, we note that $v^*$ will always be on the boundary of the Wald region.
+Thus, the constraint in \eqref{eq:cons1} will always be binding, and we can substitute both constraints directly to solve for $v^*$.
+In particular, given a set $\mathcal{N}$ of normalized coefficients and the constraint in \eqref{eq:cons1}, we can solve for some of the other coefficients.
+If $p^* > |\mathcal{N}|+1$, we use an unconstrained optimization to solve for the remaining ones after that.
+
+Specifically, partition the matrices $A_{norm}$ and $F$ into three parts as follows
+\begin{align*}
+A_{norm} &= [ \underset{|\mathcal{N}| \times (p^* - |\mathcal{N}| - 1)}{A_b}, \underset{|\mathcal{N}| \times |\mathcal{N}|}{A_1}, \underset{|\mathcal{N}| \times 1}{A_2}] \\
+F &= [\underset{K \times  (p^* - |\mathcal{N}| -1) }{F_b},\underset{K \times |\mathcal{N}| }{F_1},\underset{K \times 1}{F_2}],
+\end{align*}
+with the vector $v$ partioned accordingly into $v=[v_b; v_1; v_2]$.
+We will solve for the coefficients $v_1$ and $v_2$ using the constraints in \eqref{eq:cons2} and \eqref{eq:cons1} respectively, and then solve for the coefficients $v_b$ by unconstrained minimization.
+To do so, first note that, because $A_{norm}$ contains the rows of $F$ associated with the normalized coefficients,
+\begin{align}
+A_{norm}v =  A_b v_b + A_1 v_1 + A_2 v_2 = 0 \;\text{and thus }v_1 = {A_1}^{-1}(- A_b v_b - A_2 v_2).\label{eq:def_v1}
+\end{align}
+It follows that
+\begin{align*}
+\delta^*(v)= Fv = F_b v_b + F_1 v_1 + F_2 v_2 = F_b v_b - F_1 \big[ {A_1}^{-1}( A_b v_b + A_2 v_2)\big] + F_2 v_2,
+\end{align*}
+and the constraint in \eqref{eq:cons1} becomes
+
+%\begin{align*}
+%&\bigg[(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta} + (F_2 - F_1 {A_1}^{-1} A_2) v_2 \bigg]' \\
+%&\Sigma ^ {-1}\bigg[(F_b - F_1 {A_1}^{-1} A_b) v_b - \widehat{\delta} + (F_2 - F_1 {A_1}^{-1}A_2) v_2  \bigg] \\
+%&= c^{1 - \alpha}.
+%\end{align*}
+%Expanding this yields
+\begin{align*}
+0 = &\bigg([(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta}]' \Sigma ^ {-1} [(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta}] - c^{1 - \alpha} \bigg) \\
+&\qquad + 2 \bigg([(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta}]' \Sigma ^ {-1} [(F_2 - F_1 {A_1}^{-1} A_2) \bigg) v_2 \nonumber \\
+&\qquad +  v_2'\bigg([(F_2 - F_1 {A_1}^{-1} A_2)]'\Sigma ^ {-1} [(F_2 - F_1 {A_1}^{-1}A_2)] \bigg)v_2 .
+\end{align*}
+This is a quadratic expression for (the scalar) $v_2$ in terms of $v_b$ and, defining the scalars $d_0$, $d_1$ and $d_2$ as
+\begin{align*}
+d_0 &= \big[(F_2 - F_1 {A_1}^{-1} A_2)\big]'\Sigma ^ {-1} \big[(F_2 - F_1 {A_1}^{-1}A_2)\big], \\
+d_1(v_b) &= 2 \bigg([(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta}]' \Sigma ^ {-1} [(F_2 - F_1 {A_1}^{-1} A_2) \bigg), \text{and} \\
+d_2(v_b) &= \bigg([(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta}]' \Sigma ^ {-1} [(F_b - F_1 {A_1}^{-1}A_b) v_b - \widehat{\delta}] - c^{1 - \alpha} \bigg)
+\end{align*}
+simplifies to $d_0 v_2^2 +  d_1(v_b) v_2 + d_2 (v_b)=0$.
+
+Using the quadratic formula, we can then solve for $v_2$ by solving the minimization problem,
+\begin{align}
+\label{eq:quad_solution}
+v_2(v_b) = \dfrac{-d_1(v_b) \pm \sqrt{d_1(v_b)^2 - 4 d_0 d_2(v_b)}}{2 d_0}.
+\end{align}
+Note that, by definition, $v_2 = v_{p^*}$.
+
+Further, if $p^*= |\mathcal{N}|+1$, $v_b$ is empty and thus $v_2$ does not depend on $v_b$.
+\eqref{eq:quad_solution} results in two solutions, $v_2^+$ and $v_1^-$, corresponding to the sign ambiguity in \eqref{eq:quad_solution}.
+We choose the solution $v^*_2$ with the smaller absolute value.
+
+If $p^*> |\mathcal{N}|+1$, the constrained optimization in \eqref{eq:obj}-\eqref{eq:cons2} is equivalent to the following:
+\begin{align}
+v^2_2 =  \min_{v_b} \min_{\{+,-\}} \bigg( \dfrac{-d_1(v_b) \pm \sqrt{d_1(v_b)^2 - 4 d_0 d_2(v_b)}}{2 d_0} \bigg)^2,\label{eq:quad_solution_min}
+\end{align}
+where the inner minimization is over the sign in the quadratic formula.
+
+At this point, we have both $v^*_2$ and $v^*_b$.
+Recovering $v^*_1$ using \eqref{eq:def_v1}, we obtain $v^*=[v^*_b, v^*_1,  v^*_2]$.
+
+\section{Policy variable imputation}
+\label{sec:impute}
+
+Panel event study estimation requires assumptions about the behavior of the policy variable outside the observed time range.
+In section \ref{sec:sim} of the article, we estimated panel event studies assuming no unobserved changes in the policy variable outside the estimation period.
+This imputation scheme is implemented using the \texttt{impute(nuchange)} option.
+
+\xtevent allows for other schemes to impute the policy variable.
+For example, \xtevent can assume that the policy variable follows staggered adoption, using the \texttt{impute(stag)} option.
+It can also impute missing values of the policy variable inside the observed date range using the \texttt{impute(instag)} option.
+
+To illustrate these options, we use the simulated data example of section \ref{sec:examples} of the article and show the implied event-time dummies under the different imputation schemes.
+For the example, we add some missing values to unit 19.
+Then, we differentiate the policy variable.
+\texttt{xtevent} uses leads and lags of the differentiated policy variable to generate the event-time dummies, following equation \eqref{eq:event_study_plot}.
+
+First, we ask \texttt{xtevent} to generate the event-time dummies without any imputation and specify the option \texttt{savek(stub, noestimate)} to save them without estimating the model.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_noestimate_rmpath.log.tex}\nullskip
+\end{stlog}
+
+The event-time dummies with a ``v'' prefix and ending in \texttt{m\#} or \texttt{p\#} correspond to leads and lags of the differentiated policy variable, as described in section \ref{sec:package} of the article.
+Now, we display these event-time dummies for unit 19 in some periods.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_list_et_dummies.log.tex}\nullskip
+\end{stlog}
+
+Notice that the event-time dummies have missing values at the bottom of the table because we have not made any assumptions about the policy variable outside the observed time range.
+Besides, notice that the event-time dummies have some missing values inside the observed time range due to the missing value in the policy variable in period 35.
+From equation \eqref{eq:event_study_plot}, this latter missing value translates into two inner missing values in the event-time dummies and one missing value in the case of the left endpoint.
+
+To impute the policy variable under staggered adoption, we use the \texttt{impute(stag)} option.
+\xtevent verifies that the policy variable follows staggered adoption.
+If so, \xtevent imputes the policy variable outside the observed time range.
+Then, it uses the imputed policy variable to generate the event-time dummies and endpoints.
+We add the suboption \texttt{saveimp} to save the imputed policy variable as \texttt{z\_imputed}.
+We also differentiate the new imputed policy variable to see how its leads and lags translate to new event-time dummies.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_dummies_with_imputation.log.tex}\nullskip
+\end{stlog}
+
+Below, we compare the original policy variable, the imputed policy variable, the differentiated imputed policy variable, some event-time dummies, and the left endpoint generated using the imputed policy variable.
+First, the policy variable has been imputed in the observed time range.
+Nonetheless, the imputation also assumes that the policy variable in periods after $t=40$ would have the same value as the one in that last period.
+This imputation can be seen in the event-time dummies, which now have zeros corresponding to leads of the differentiated policy variable in periods after 40.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_list_et_dummies_imputation.log.tex}\nullskip
+\end{stlog}
+
+We now ask \texttt{xtevent} to impute the policy variable using the \texttt{impute(instag)} option.
+This imputation scheme lets us impute missing values in the policy variable outside and inside the observed time range.
+As described in section \ref{sec:package} of the article, the \texttt{impute(instag)} option implements the \texttt{impute(stag)} option, but it also imputes missing values inside the observed time range in cases where it is possible to assume some value based on the policy values in surrounding periods.
+As in the previous example, we also generate the differentiated imputed policy variable for comparison.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_dummies_with_imputation_instag.log.tex}\nullskip
+\end{stlog}
+
+Below, we compare the original policy variable, the imputed policy variable, the differentiated imputed policy variable, some event-time dummies, and the left endpoint generated with the imputed policy variable.
+First, the imputed policy variable does not have missing values inside or outside the event-time range.
+As in the example using \texttt{impute(stag)}, the event-time dummies have zeros corresponding to leads of the differentiated policy variable in periods greater than 40. Additionally, now the event-time dummies do not have missing values inside the event-time range.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_list_et_dummies_imputation_instag.log.tex}\nullskip
+\end{stlog}
+
+\section{Estimation in repeated cross-sectional datasets}
+\label{sec:xsection}
+
+\texttt{xtevent} allows estimation with repeated cross-sectional datasets when \texttt{policyvar} varies at the group level, and \texttt{panelvar} identifies the groups.
+For instance, \texttt{panelvar} could indicate states at which \texttt{policyvar} changes, while the observations in the dataset could be individuals in each state.
+\texttt{xtevent} allows estimations in these settings directly with the \texttt{repeatedcs} option.
+It also allows for using the two step procedure described in \citet{hansen2007generalized}.
+To use the latter method, the user should first use the \texttt{get\_unit\_time\_effects} command to estimate unit-time effects and then use these estimations as input for \texttt{xtevent}.
+
+We illustrate the use of \texttt{get\_unit\_time\_effects}.
+First, we create a variable \texttt{state} that represents groups where individuals receive the treatment in the same period.
+Then, we call \texttt{get\_unit\_time\_effects}.
+It saves a \texttt{dta} file with the unit-time effects.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_rcsection1_estimation_modified_rmpath.log.tex}\nullskip
+\end{stlog}
+
+Then, we keep one observation per state-time in the repeated cross-sectional data and merge the dataset with the unit-time effects.
+Afterwards, we execute \texttt{xtevent}.
+Since we use a smaller dataset to estimate the event-study, this method can be faster than using the \texttt{repeatedcs} option.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_rcsection2_estimation_modified_rmpath.log.tex}\nullskip
+\end{stlog}
+
+\section{Estimation with heterogenous treatment effects in staggered adoption settings}
+\label{sec:sunabraham}
+
+\xtevent allows estimation permitting heterogeneous treatment effects in staggered adoption settings.
+Following the approach of \cite{sun2021estimating}, we introduce a setting with heterogeneous treatment effects across treatment cohorts as follows:
+let $t^{\star} (i)$ be the cohort for unit $i$, namely, the period when unit $i$ adopts the policy.
+Denote the effects of the policy on the outcome for cohort $t^{\star}$ as $\left\{ \beta_{m,t^{\star}} \right\}_{m=-G}^M$.
+The equation for the outcome becomes:
+
+\begin{equation*}
+y_{it} =  \alpha_{i} + \gamma_{t} + q_{it}'\psi  + \sum_{m=-G}^{M}\beta_{m,t^{\star}(i)} z_{i,t-m} + C_{it} + \varepsilon_{it}.
+\end{equation*}
+
+To estimate the event-study path of the outcome in this setting, \xtevent estimates an extended version of equation \eqref{eq:event_study_plot} interacting the event-time dummies with cohort indicators as proposed in \cite{freyaldenhoven2021visualization}:
+
+\begin{equation}
+\begin{split}
+y_{it} = \sum_{c} \sum_{k=-G-L_G}^{M+L_M -1} \left(  \mathbf{1}\left\{ t^{\star} (i) = c \right\} \right) \left( \delta_{k,c} \Delta  z_{i,t-k} + \delta_{M+L_M,c} z_{i,t-M-L_M} + \delta_{-G-L_G-1,c}(1-z_{i,t+G+L_G}) \right)
+\\ \centering
++ \alpha_{i} + \gamma_{t} + q'_{it}\psi + C_{it} + \varepsilon_{it},
+\end{split}
+\label{eq:sunabraham}
+\end{equation}
+
+Using the two-way fixed effects estimator to estimate \eqref{eq:sunabraham}, this is equivalent to the estimator proposed in \cite{sun2021estimating}. \xtevent further allows to estimate \eqref{eq:sunabraham} using any of the estimation strategies outlined in Section 2.1., except IV estimation.
+
+\xtevent estimates \eqref{eq:sunabraham} on a sample defined by the \texttt{cohort} and \texttt{control\_cohort} options.
+In staggered adoption settings, the option \texttt{cohort(create)} asks \xtevent to automatically generate a categorical variable for treatment cohorts.
+\xtevent sets the value of this categorical variable to the value of the time variable the first time a unit is treated.
+For units that are never treated, \xtevent sets the value of this variable to missing.
+Similarly, the \texttt{control\_cohort(create)} option asks \xtevent to automatically generate an indicator for the control cohort.
+\xtevent sets this indicator to 1 for never-treated units and zero otherwise.
+
+If the cohort in \texttt{control\_cohort} is a never-treated cohort, \xtevent estimates equation \eqref{eq:sunabraham} on the whole sample.
+Otherwise, \xtevent estimates \eqref{eq:sunabraham} on the subset of periods when observations in the control cohort have not yet been treated.
+By default, the estimation excludes always-treated cohorts.
+
+After obtaining estimates $\hat{\delta}_{k,c}$ for $k=-G-L_G-1,...,M+L_M$ and for each cohort $c$, \xtevent obtains the estimate of the average treatment effect at event-time $k$, $\hat{\delta}_k$, as an average of the $\hat{\delta}_{k,c}$ estimates weighting by the share of observations from cohort $c$ in each relative time $k$ \citep{sun2021estimating}:
+
+\begin{equation*}
+\hat{\delta}_k = \sum_c \delta_{k,c} \hat{Pr} \left\{ t^{\star}(i) = c \ | \ t^{\star}(i) \in [-k,T-k] \right\}.
+\end{equation*}
+The variance of $\hat{\delta}_k$ is obtained using the formulas in Appendix C.1 of \cite{sun2021estimating}.
+
+To permit greater flexibility, \xtevent also allows estimation of \eqref{eq:sunabraham} outside staggered adoption settings or in settings where the user wants to aggregate treatment cohorts for user-provided cohort and control cohort variables through the \texttt{cohort(variable varname, [,force])} and \texttt{control\_cohort(variable varname, [,force])} options.
 
 
 
