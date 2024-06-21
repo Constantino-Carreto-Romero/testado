@@ -949,33 +949,23 @@ and the asymptotic variance of $\left(\widehat{\delta}^{*},\widehat{\psi}\right)
 \end{pmatrix}.
 \end{align*}
 
-\section{Sup-t confidence intervals}
+\section{Sup-t confidence bands}
 \label{sec:sup-t}
 
-Following \cite{montiel2019simultaneous}, we calculate the simultaneous confidence band for each coefficient $\delta_k$, $k=-G-L_G-1,...,M+L_M$ as a scaled-up version of its traditional pointwise confidence band.
-The simultaneous confidence band around each coefficient $\delta_k$ is:
-
+We use sup-t bands for uniform inference (see \citet{freyberger2018uniform}, \citet{montiel2019simultaneous}, and the references therein for additional background). These bands are constructed by adding (subtracting) a constant times the vector of standard errors of $\hat{\delta}$ from $\hat{\delta}$, such that the simultaneous confidence band at each coefficient $\delta_k$ is equal to
 \begin{equation*}
-\hat{B}_k (c) \equiv \left[ \delta_k - \hat{\sigma}_k c, \delta_k + \hat{\sigma}_k c \right ]
+\hat{B}_k(\alpha) \equiv \left[ \hat{\delta}_k - c_\alpha \hat{\sigma}_k , \hat{\delta}_k + c_\alpha \hat{\sigma}_k  \right ]
 \end{equation*}
+for a chosen significance level $\alpha$, where $c_\alpha$ denotes the corresponding sup-t critical value.
 
-where $c$ is a scaling parameter. For sup-t confidence bands at a confidence level $\alpha$, we choose $c$ to be a sup-t critical value. Let $K$ be the dimension of $\delta$, let  $\Omega_{K \times K}$ be the asymptotic variance of $\delta$, and let $V$ be a multivariate normal variable of dimension $K$ with mean $\mathbf{0}_{K \times K}$ and variance $\Omega$.
-We choose $c$ as:
-
-\begin{equation*}
-  c = Q_{1-\alpha} \left( \underset{j=1,...,K}{max} \left| \Omega_{jj}^{-1/2} V_j \right| \right)
-\end{equation*}
-
-where of $\hat{\delta}$, and $Q$ is the quantile function.
-
-To estimate $c$, we use the plug-in estimator from \cite{montiel2019simultaneous}.
-Let $\hat{\Omega}$ be the estimated variance of $\hat{\delta}$.
+To compute $c_\alpha$, we use a simple plug-in estimator (\cite{montiel2019simultaneous}).
 \begin{enumerate}
-\item Choose a number of replications $N$.
-\item Draw $N$ i.i.d vectors $\hat{V}^{(\ell)},\ \ell = 1,\ldots,N$ of dimension $K$ from a multivariate normal with mean $\mathbf{0}_K$ and variance $\hat{\Omega}_{K \times K}$.
-\item Standardize each variable in the vector, and compute the maximum of the absolute value of the $K$ variables for each replication: $\underset{j=1,...,K}{max} \left| \hat{\Omega}_{jj}^{-1/2} \hat{V}_j^{(\ell)} \right|$.
-\item The estimate of $c$ is the empirical $1-\alpha$ quantile of the maximums across the $\ell$ replications.
+	\item Draw $N$ i.i.d vectors $\hat{V}^{(\ell)},\ \ell = 1,\ldots,N$ of dimension $K=\dim(\hat{\delta})$ from a multivariate normal with mean $\mathbf{0}_K$ and variance $\hat{\Omega}$ given by the estimated variance of $\hat{\delta}$.
+	\item For each replication $\ell=1,\ldots, N$, let $t_\ell=\underset{k=1,...,K}{\max} \left| \hat{\Omega}_{kk}^{-1/2} \hat{V}_k^{(\ell)} \right|$.
+	\item Set $c_\alpha = Q_{1-\alpha} \left( t_\ell \right)$, $\ell=1,\ldots, N$, where $Q$ is the quantile function.
 \end{enumerate}
+
+
 \section{Details for least wiggly path}
 \label{sec:smoothest_path}
 
@@ -985,15 +975,15 @@ We denote the dimension of $\delta$ as $K \equiv G + M + L_G + L_M + 2$. For $v$
 \begin{align*}
 \delta_k^*(v) = \sum_{j=1}^{\dim(v)} v_j (\frac{k-s_1}{s_2})^{j-1},
 \end{align*}
- where $v_j$ denotes the $j^{\text{th}}$ element of coefficient vector $v$ and $\dim(v)$ denotes the dimension of this vector. $s_1$ and $s_2$ denote constants that shift and scale the event time (range of the polynomial).
+where $v_j$ denotes the $j^{\text{th}}$ element of coefficient vector $v$ and $\dim(v)$ denotes the dimension of this vector. $s_1$ and $s_2$ denote constants that shift and scale the event time (range of the polynomial).
 We set $s_1 = -G-L_G-1$ and $s_2 = M + L_M + G + L_G +2$. Let $\delta^*(v)$ collect the elements $\delta_k^*(v)$ for $-G-L_G-1 \leq k \leq M+L_M$, so that $\delta^*(v)$ reflects a polynomial path in event time with coefficients $v$.
 
 \xtevent plots the least ``wiggly'' confound whose path is contained in the Wald region $CR(\delta)$ for the event-time path of the outcome.
 Specifically, it plots $\delta^*(v^*)$, where
 
 \begin{align}
-  p^* &= \min\{\dim(v): \delta^*(v) \in CR(\delta)\} \text{ and}  \label{eq:max_order} \\
-  v^* &= \arg\min_{v}\{v_{p^*}^2: \dim(v)=p^*, \delta^*(v) \in CR(\delta)\}. \label{eq:min_coeff}
+p^* &= \min\{\dim(v): \delta^*(v) \in CR(\delta)\} \text{ and}  \label{eq:max_order} \\
+v^* &= \arg\min_{v}\{v_{p^*}^2: \dim(v)=p^*, \delta^*(v) \in CR(\delta)\}. \label{eq:min_coeff}
 \end{align}
 
 Intuitively, the Wald confidence region represents the set of event time paths for which a joint $F$-test of the observed point estimates is not rejected.
@@ -1016,27 +1006,27 @@ We define $\Sigma$ as the covariance matrix of $\widehat \delta$ with added zero
 
 Since $p^*$ is generally small, it is feasible to solve \eqref{eq:max_order} iteratively as follows:
 \begin{algorithm}
-\caption{Finding $p^*$}
-\label{alg:find_p}
-\begin{algorithmic}
-\State $p^* \gets 0$
-\State feasible $\gets$ 0
-\While {feasible = 0}
-    \State $p^* \gets p^*+1$
-  \State feasible $\gets$ SolutionInWaldRegion($\widehat\delta,p^*,\alpha$)
-\EndWhile
-\end{algorithmic}
+	\caption{Finding $p^*$}
+	\label{alg:find_p}
+	\begin{algorithmic}
+		\State $p^* \gets 0$
+		\State feasible $\gets$ 0
+		\While {feasible = 0}
+		\State $p^* \gets p^*+1$
+		\State feasible $\gets$ SolutionInWaldRegion($\widehat\delta,p^*,\alpha$)
+		\EndWhile
+	\end{algorithmic}
 \end{algorithm}
 
 \begin{algorithm*}
-\begin{algorithmic}
-\Function{SolutionInWaldRegion}{$\widehat\delta,p^*,\alpha$}
-\State $W^*=\min_{v:dim(v)=p^*} [\delta^*(v)-\widehat{\delta}]'\Sigma^{-1}[\delta^*(v)-\widehat{\delta}] \; \text{s.t. } \delta_{k_n}^*(v)=0 \text{ for } n \in \mathcal{N}$\\
-\Comment $\Sigma^{-1}$ denotes the generalized inverse.
-\State \textbf{return} $\textbf{1}(W^* \le c^{1-\alpha})$\\
-\Comment $c^{1-\alpha}$ is the $1-\alpha$ quantile of a random variable $\tau \sim \chi^2(K-|\mathcal{N}|)$.
-\EndFunction
-\end{algorithmic}
+	\begin{algorithmic}
+		\Function{SolutionInWaldRegion}{$\widehat\delta,p^*,\alpha$}
+		\State $W^*=\min_{v:dim(v)=p^*} [\delta^*(v)-\widehat{\delta}]'\Sigma^{-1}[\delta^*(v)-\widehat{\delta}] \; \text{s.t. } \delta_{k_n}^*(v)=0 \text{ for } n \in \mathcal{N}$\\
+		\Comment $\Sigma^{-1}$ denotes the generalized inverse.
+		\State \textbf{return} $\textbf{1}(W^* \le c^{1-\alpha})$\\
+		\Comment $c^{1-\alpha}$ is the $1-\alpha$ quantile of a random variable $\tau \sim \chi^2(K-|\mathcal{N}|)$.
+		\EndFunction
+	\end{algorithmic}
 \end{algorithm*}
 
 Note that $p^*$ is less than $K=\dim(\delta)$ by construction, and thus the loop in Algorithm \ref{alg:find_p} is (at least theoretically) guaranteed to converge after at most $K$ rounds.
@@ -1131,7 +1121,7 @@ simplifies to $d_0 v_2^2 +  d_1(v_b) v_2 + d_2 (v_b)=0$.
 Using the quadratic formula, we can then solve for $v_2$ by solving the minimization problem,
 \begin{align}
 \label{eq:quad_solution}
-    v_2(v_b) = \dfrac{-d_1(v_b) \pm \sqrt{d_1(v_b)^2 - 4 d_0 d_2(v_b)}}{2 d_0}.
+v_2(v_b) = \dfrac{-d_1(v_b) \pm \sqrt{d_1(v_b)^2 - 4 d_0 d_2(v_b)}}{2 d_0}.
 \end{align}
 Note that, by definition, $v_2 = v_{p^*}$.
 
@@ -1141,26 +1131,25 @@ We choose the solution $v^*_2$ with the smaller absolute value.
 
 If $p^*> |\mathcal{N}|+1$, the constrained optimization in \eqref{eq:obj}-\eqref{eq:cons2} is equivalent to the following:
 \begin{align}
-  v^2_2 =  \min_{v_b} \min_{\{+,-\}} \bigg( \dfrac{-d_1(v_b) \pm \sqrt{d_1(v_b)^2 - 4 d_0 d_2(v_b)}}{2 d_0} \bigg)^2,\label{eq:quad_solution_min}
+v^2_2 =  \min_{v_b} \min_{\{+,-\}} \bigg( \dfrac{-d_1(v_b) \pm \sqrt{d_1(v_b)^2 - 4 d_0 d_2(v_b)}}{2 d_0} \bigg)^2,\label{eq:quad_solution_min}
 \end{align}
 where the inner minimization is over the sign in the quadratic formula.
 
 At this point, we have both $v^*_2$ and $v^*_b$.
 Recovering $v^*_1$ using \eqref{eq:def_v1}, we obtain $v^*=[v^*_b, v^*_1,  v^*_2]$.
 
-
 \section{Policy variable imputation}
 \label{sec:impute}
 
 Panel event study estimation requires assumptions about the behavior of the policy variable outside the observed time range.
-In section \ref{sec:sim}, we estimated panel event studies assuming no unobserved changes in the policy variable outside the estimation period.
+In section \ref{sec:sim} of the article, we estimated panel event studies assuming no unobserved changes in the policy variable outside the estimation period.
 This imputation scheme is implemented using the \texttt{impute(nuchange)} option.
 
 \xtevent allows for other schemes to impute the policy variable.
 For example, \xtevent can assume that the policy variable follows staggered adoption, using the \texttt{impute(stag)} option.
 It can also impute missing values of the policy variable inside the observed date range using the \texttt{impute(instag)} option.
 
-To illustrate these options, we use the simulated data example of section \ref{sec:examples} and show the implied event-time dummies under the different imputation schemes.
+To illustrate these options, we use the simulated data example of section \ref{sec:examples} of the article and show the implied event-time dummies under the different imputation schemes.
 For the example, we add some missing values to unit 19.
 Then, we differentiate the policy variable.
 \texttt{xtevent} uses leads and lags of the differentiated policy variable to generate the event-time dummies, following equation \eqref{eq:event_study_plot}.
@@ -1171,7 +1160,7 @@ First, we ask \texttt{xtevent} to generate the event-time dummies without any im
 	\input{\dir/output/analysis/fhps_noestimate_rmpath.log.tex}\nullskip
 \end{stlog}
 
-The event-time dummies with a ``v'' prefix and ending in \texttt{m\#} or \texttt{p\#} correspond to leads and lags of the differentiated policy variable, as described in section \ref{sec:package}.
+The event-time dummies with a ``v'' prefix and ending in \texttt{m\#} or \texttt{p\#} correspond to leads and lags of the differentiated policy variable, as described in section \ref{sec:package} of the article.
 Now, we display these event-time dummies for unit 19 in some periods.
 
 \begin{stlog}
@@ -1204,7 +1193,7 @@ This imputation can be seen in the event-time dummies, which now have zeros corr
 
 We now ask \texttt{xtevent} to impute the policy variable using the \texttt{impute(instag)} option.
 This imputation scheme lets us impute missing values in the policy variable outside and inside the observed time range.
-As described in section \ref{sec:package}, the \texttt{impute(instag)} option implements the \texttt{impute(stag)} option, but it also imputes missing values inside the observed time range in cases where it is possible to assume some value based on the policy values in surrounding periods.
+As described in section \ref{sec:package} of the article, the \texttt{impute(instag)} option implements the \texttt{impute(stag)} option, but it also imputes missing values inside the observed time range in cases where it is possible to assume some value based on the policy values in surrounding periods.
 As in the previous example, we also generate the differentiated imputed policy variable for comparison.
 
 \begin{stlog}
@@ -1219,13 +1208,11 @@ As in the example using \texttt{impute(stag)}, the event-time dummies have zeros
 	\input{\dir/output/analysis/fhps_list_et_dummies_imputation_instag.log.tex}\nullskip
 \end{stlog}
 
-
-
 \section{Estimation in repeated cross-sectional datasets}
 \label{sec:xsection}
 
 \texttt{xtevent} allows estimation with repeated cross-sectional datasets when \texttt{policyvar} varies at the group level, and \texttt{panelvar} identifies the groups.
-For instance, \texttt{panelvar} could indicate states at which \texttt{policyvar} changes, while the observations in the dataset should be individuals in each state.
+For instance, \texttt{panelvar} could indicate states at which \texttt{policyvar} changes, while the observations in the dataset could be individuals in each state.
 \texttt{xtevent} allows estimations in these settings directly with the \texttt{repeatedcs} option.
 It also allows for using the two step procedure described in \citet{hansen2007generalized}.
 To use the latter method, the user should first use the \texttt{get\_unit\_time\_effects} command to estimate unit-time effects and then use these estimations as input for \texttt{xtevent}.
@@ -1236,7 +1223,7 @@ Then, we call \texttt{get\_unit\_time\_effects}.
 It saves a \texttt{dta} file with the unit-time effects.
 
 \begin{stlog}
-\input{\dir/output/analysis/fhps_rcsection1_estimation_modified_rmpath.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_rcsection1_estimation_modified_rmpath.log.tex}\nullskip
 \end{stlog}
 
 Then, we keep one observation per state-time in the repeated cross-sectional data and merge the dataset with the unit-time effects.
@@ -1244,15 +1231,14 @@ Afterwards, we execute \texttt{xtevent}.
 Since we use a smaller dataset to estimate the event-study, this method can be faster than using the \texttt{repeatedcs} option.
 
 \begin{stlog}
-\input{\dir/output/analysis/fhps_rcsection2_estimation_modified_rmpath.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_rcsection2_estimation_modified_rmpath.log.tex}\nullskip
 \end{stlog}
-
 
 \section{Estimation with heterogenous treatment effects in staggered adoption settings}
 \label{sec:sunabraham}
 
-\xtevent allows estimation robust to heterogeneous treatment effects in staggered adoption settings using the approach of \cite{sun2021estimating}.
-Following \cite{freyaldenhoven2021visualization}, we introduce a setting with heterogeneous treatment effects across treatment cohorts as follows:
+\xtevent allows estimation permitting heterogeneous treatment effects in staggered adoption settings.
+Following the approach of \cite{sun2021estimating}, we introduce a setting with heterogeneous treatment effects across treatment cohorts as follows:
 let $t^{\star} (i)$ be the cohort for unit $i$, namely, the period when unit $i$ adopts the policy.
 Denote the effects of the policy on the outcome for cohort $t^{\star}$ as $\left\{ \beta_{m,t^{\star}} \right\}_{m=-G}^M$.
 The equation for the outcome becomes:
@@ -1261,35 +1247,38 @@ The equation for the outcome becomes:
 y_{it} =  \alpha_{i} + \gamma_{t} + q_{it}'\psi  + \sum_{m=-G}^{M}\beta_{m,t^{\star}(i)} z_{i,t-m} + C_{it} + \varepsilon_{it}.
 \end{equation*}
 
-To estimate the event-study path of the outcome in this setting, \xtevent estimates an extended version of equation \eqref{eq:event_study_plot} interacting the event-time dummies with cohort indicators:
+To estimate the event-study path of the outcome in this setting, \xtevent estimates an extended version of equation \eqref{eq:event_study_plot} interacting the event-time dummies with cohort indicators as proposed in \cite{freyaldenhoven2021visualization}:
 
 \begin{equation}
-    \begin{split}
-        y_{it} = \sum_{c} \sum_{k=-G-L_G}^{M+L_M -1} \left(  \mathbf{1}\left\{ t^{\star} (i) = c \right\} \right) \left( \delta_{k,c} \Delta  z_{i,t-k} + \delta_{M+L_M,c} z_{i,t-M-L_M} + \delta_{-G-L_G-1,c}(1-z_{i,t+G+L_G}) \right)
-        \\ \centering
-        + \alpha_{i} + \gamma_{t} + q'_{it}\psi + C_{it} + \varepsilon_{it},
-    \end{split}
-    \label{eq:sunabraham}
+\begin{split}
+y_{it} = \sum_{c} \sum_{k=-G-L_G}^{M+L_M -1} \left(  \mathbf{1}\left\{ t^{\star} (i) = c \right\} \right) \left( \delta_{k,c} \Delta  z_{i,t-k} + \delta_{M+L_M,c} z_{i,t-M-L_M} + \delta_{-G-L_G-1,c}(1-z_{i,t+G+L_G}) \right)
+\\ \centering
++ \alpha_{i} + \gamma_{t} + q'_{it}\psi + C_{it} + \varepsilon_{it},
+\end{split}
+\label{eq:sunabraham}
 \end{equation}
 
-\xtevent estimates this equation on a sample defined by the \texttt{cohort} and \texttt{control\_cohort} options.
-If the cohort in \texttt{control\_cohort} is a never-treated cohort, \xtevent estimates equation \eqref{eq:sunabraham} in the whole sample.
-Otherwise, \xtevent estimates \eqref{eq:sunabraham} in the subset of periods when observations in the control cohort have not yet been treated.
+Using the two-way fixed effects estimator to estimate \eqref{eq:sunabraham}, this is equivalent to the estimator proposed in \cite{sun2021estimating}. \xtevent further allows to estimate \eqref{eq:sunabraham} using any of the estimation strategies outlined in Section 2.1., except IV estimation.
+
+\xtevent estimates \eqref{eq:sunabraham} on a sample defined by the \texttt{cohort} and \texttt{control\_cohort} options.
+In staggered adoption settings, the option \texttt{cohort(create)} asks \xtevent to automatically generate a categorical variable for treatment cohorts.
+\xtevent sets the value of this categorical variable to the value of the time variable the first time a unit is treated.
+For units that are never treated, \xtevent sets the value of this variable to missing.
+Similarly, the \texttt{control\_cohort(create)} option asks \xtevent to automatically generate an indicator for the control cohort.
+\xtevent sets this indicator to 1 for never-treated units and zero otherwise.
+
+If the cohort in \texttt{control\_cohort} is a never-treated cohort, \xtevent estimates equation \eqref{eq:sunabraham} on the whole sample.
+Otherwise, \xtevent estimates \eqref{eq:sunabraham} on the subset of periods when observations in the control cohort have not yet been treated.
 By default, the estimation excludes always-treated cohorts.
 
-After obtaining estimates $\hat{\delta}_{k,c}$ for $k=-G-L_G-1,...,M+L_M$ and for each cohort $c$, \xtevent obtains the estimate of the average treatment effect at event-time $k$ for , $\hat{\delta}_k$, as an average of the $\hat{\delta}_{k,c}$ estimates weighting by the share of observations from cohort $c$ in each relative time $k$.
+After obtaining estimates $\hat{\delta}_{k,c}$ for $k=-G-L_G-1,...,M+L_M$ and for each cohort $c$, \xtevent obtains the estimate of the average treatment effect at event-time $k$, $\hat{\delta}_k$, as an average of the $\hat{\delta}_{k,c}$ estimates weighting by the share of observations from cohort $c$ in each relative time $k$ \citep{sun2021estimating}:
 
 \begin{equation*}
-  \hat{\delta}_k = \sum_c \delta_{k,c} \hat{Pr} \left\{ t^{\star}(i) = c \ | \ t^{\star}(i) \in [c,T-c] \right\}
+\hat{\delta}_k = \sum_c \delta_{k,c} \hat{Pr} \left\{ t^{\star}(i) = c \ | \ t^{\star}(i) \in [-k,T-k] \right\}.
 \end{equation*}
-
 The variance of $\hat{\delta}_k$ is obtained using the formulas in Appendix C.1 of \cite{sun2021estimating}.
 
-
-
-\section{The xtevent Package}\label{sec:package}
-The \xtevent package includes the commands \texttt{xtevent} for estimation, \texttt{xteventplot} for visualization, and \texttt{xteventtest} for postestimation hypothesis testing.
-It also includes \texttt{get\_unit\_time\_effects}, an auxiliary command to use in combination with \texttt{xtevent} in repeated cross-section settings. This appendix describes the syntax and options of each of these commands.
+To permit greater flexibility, \xtevent also allows estimation of \eqref{eq:sunabraham} outside staggered adoption settings or in settings where the user wants to aggregate treatment cohorts for user-provided cohort and control cohort variables through the \texttt{cohort(variable varname, [,force])} and \texttt{control\_cohort(variable varname, [,force])} options.
 
 \subsection{The xtevent command}
 The \texttt{xtevent} command has the following syntax:
