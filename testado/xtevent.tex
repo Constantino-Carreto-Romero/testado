@@ -485,7 +485,7 @@ In Appendix \ref{sec:package}, we give a more detailed description of the syntax
 \label{sec:examples}
 
 This section provides two examples of \texttt{xtevent} usage.
-First, we display the basic functionality of the package using simulated data from \citet{freyaldenhoven2021visualization}.
+First, we display the basic functionality of the package using simulated data from \citet{freyaldenhoven2021visualizationforth}.
 Then, we show additional options using real data from \citet{martinez2022mobility}.
 
 \subsection{Simulated data example} \label{sec:sim}
@@ -497,33 +497,33 @@ The coefficient on the treatment variable is one.
 
 We start by loading the dataset and specifying the unit and time variables.
 \begin{stlog}
-\input{\dir/output/analysis/fhps_load_data_rmpath.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_load_data_rmpath.log.tex}\nullskip
 \end{stlog}
 
 Below, we show a glimpse of the dataset.
 The variable \texttt{id} indexes the cross-sectional units, \texttt{t} indexes time, \texttt{y} is the outcome variable, \texttt{z} is the policy variable, and \texttt{x} is a control variable.
 
 \begin{stlog}
-\input{\dir/output/analysis/fhps_list_some_values.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_list_some_values.log.tex}\nullskip
 \end{stlog}
 
 Notice that the time variable \texttt{t} is calendar time, not event time.
 \xtevent does not require normalization of the time variable, as the specification in equation \eqref{eq:event_study_plot} allows discrete or continuous policy variables and single or multiple changes.
 
 \subsubsection*{Basic functionality}
-\label{sec:examples_basic}																																											
+\label{sec:examples_basic}
 
 We estimate equation \eqref{eq:event_study_plot} setting $M + L_M = 5$ and $G + L_G = 5$, so we are looking at the effects of the policy on the outcome five periods before and five periods after policy adoption.
 To estimate a basic panel event study with dynamic effects of policy variable \texttt{z} on \texttt{y} using \texttt{x} as control and plot the results, we write:
 
 \begin{stlog}
-\input{\dir/output/analysis/fhps_default_estimation_modified.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_default_estimation_modified.log.tex}\nullskip
 \end{stlog}
 
 The \texttt{panelvar} and \texttt{timevar} options indicate the cross-sectional and time dimensions of the dataset.
 The \texttt{window} option specifies the event-time periods to include.
 By specifying the \texttt{impute(nuchange)} option, we ask \xtevent to assume that the policy does not change outside the estimation window and to impute the leads and lags of the policy variable accordingly.
-We discuss alternative imputation schemes in Appendix \ref{sec:impute}.
+We discuss alternative imputation schemes in Appendix \ref{sec:impute} in the online supplementary material.
 
 \xtevent automatically creates event-time dummies for event-times -5 to 5, denoted by \texttt{\_k\_eq\_m5},\texttt{\_k\_eq\_m4},...,\texttt{\_k\_eq\_p5}, plus endpoint dummies for event-times $\leq -6$ and $\geq 6$ (\texttt{\_k\_eq\_m6,\_k\_eq\_p6}) and includes them as independent variables.
 The normalized coefficient for event-time = -1 is omitted.
@@ -532,11 +532,11 @@ In this case, \xtevent used \texttt{areg} to estimate the regression, so the uni
 The default output includes conventional standard errors.
 
 \begin{figure}[h!]
-\begin{center}
-\epsfig{file=\dir/output/analysis/fhps_graph_from_plot_option, width=.8\textwidth}
-\end{center}
-\caption{Event-study plot}
-\label{fig:graph_from_plot_option}
+	\begin{center}
+		\epsfig{file=\dir/output/analysis/fhps_graph_from_plot_option, width=.8\textwidth}
+	\end{center}
+	\caption{Event-study plot}
+	\label{fig:graph_from_plot_option}
 \end{figure}
 
 The \texttt{plot} option requests an event-study plot after estimation, shown in figure \ref{fig:graph_from_plot_option}.
@@ -550,7 +550,7 @@ The user can also specify additional variables to be absorbed through the option
 To ask \xtevent to estimate with \texttt{reghdfe} and additionally absorb the variable \texttt{eta\_r2}, we write:
 
 \begin{stlog}
-\input{\dir/output/analysis/fhps_reghdfe.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_reghdfe.log.tex}\nullskip
 \end{stlog}
 
 \subsubsection*{Choosing different windows}
@@ -559,7 +559,7 @@ We can also specify an asymmetric window.
 For instance, for an estimation of 4 pre-event periods, 7 post-event periods, and two endpoints:
 
 \begin{stlog}
-\input{\dir/output/analysis/fhps_asymmetric.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_asymmetric.log.tex}\nullskip
 \end{stlog}
 
 With the notation from equation \eqref{eq:event_study_plot}, this estimation corresponds to setting $G$, the number of pre-event where anticipated effects can occur, to 0; $L_G$, the number of pre-event periods to use for visualizing pre-event effects, to $4$.
@@ -567,7 +567,7 @@ Analogously, it sets $M$ the number of post-event periods for lagged effects, to
 This is equivalent to explicitly specifying the values of $G$, $L_G$, $M$, and $L_M$:
 
 \begin{stlog}
-\input{\dir/output/analysis/fhps_overidsyntax.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_overidsyntax.log.tex}\nullskip
 \end{stlog}
 
 \subsubsection*{Linear trend adjustment}
@@ -578,7 +578,7 @@ We estimate the linear event-time trend using three pre-event periods ($-3, -2,-
 We also save the overlay data for plotting:
 
 \begin{stlog}
-\input{\dir/output/analysis/fhps_trend_estimation_modified.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_trend_estimation_modified.log.tex}\nullskip
 \end{stlog}
 
 To visualize the original estimates, the extrapolated trend and the linear-trend-adjusted estimates, \texttt{xtevent} can produce an overlay plot:
@@ -586,21 +586,21 @@ We use \xteventplot to produce an overlay plot with the extrapolated trend and a
 We show the overlay and adjusted event-study plots in figure \ref{fig:trend}.
 
 \begin{figure}[h!]
-\centering
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=.9\linewidth]{\dir/output/analysis/fhps_trend_estimation_overlay}
-  \caption{Overlay extrapolation line}
-  \label{fig:overlay_trend}
-\end{subfigure}%
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=.9\linewidth]{\dir/output/analysis/fhps_trend_estimation_overlay_adj}
-  \caption{Subtract extrapolated trend}
-  \label{fig:subtract_trend}
-\end{subfigure}
-\caption{Linear trend adjustment}
-\label{fig:trend}
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.9\linewidth]{\dir/output/analysis/fhps_trend_estimation_overlay}
+		\caption{Overlay extrapolation line}
+		\label{fig:overlay_trend}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.9\linewidth]{\dir/output/analysis/fhps_trend_estimation_overlay_adj}
+		\caption{Subtract extrapolated trend}
+		\label{fig:subtract_trend}
+	\end{subfigure}
+	\caption{Linear trend adjustment}
+	\label{fig:trend}
 \end{figure}
 
 \subsubsection*{Pretrends adjustment with proxy variables}
@@ -612,7 +612,7 @@ Alternatively, the user can specify a specific lead or different variables to be
 \xtevent uses \texttt{xtivregress} to estimate this model.
 
 \begin{stlog}
-\input{\dir/output/analysis/fhps_iv_estimation_modified.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_iv_estimation_modified.log.tex}\nullskip
 \end{stlog}
 
 \xteventplot can create several plots to illustrate this estimator.
@@ -622,55 +622,55 @@ Second, using the option \texttt{proxy}, we illustrate the dynamics of the proxy
 Third, using the option \texttt{overlay(iv)}, we create a plot that aligns the dynamics of the proxy and the outcome between the coefficient used as an instrument and the normalized coefficient (shown in Figure \ref{fig:overlayfhs} panel c)).
 Finally, using \texttt{xteventplot} and no additional options, we create a plot that shows the coefficients of the outcome after subtracting the rescaled event-study coefficients for the proxy (shown in Figure \ref{fig:overlayfhs} panel d)).
 \begin{stlog}
-\input{\dir/output/analysis/fhps_iv_outcome_plot.log.tex}\nullskip
-\input{\dir/output/analysis/fhps_iv_proxy_plot.log.tex}\nullskip
-\input{\dir/output/analysis/fhps_iv_proxy_outcome_plot.log.tex}\nullskip
-\input{\dir/output/analysis/fhps_iv_subtraction_plot.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_iv_outcome_plot.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_iv_proxy_plot.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_iv_proxy_outcome_plot.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_iv_subtraction_plot.log.tex}\nullskip
 \end{stlog}
 
 \begin{figure}[h!]
-\centering
-\begin{subfigure}{0.5\textwidth}
-  \centering
-  \includegraphics[width=0.9\linewidth]{\dir/output/analysis/fhps_iv_outcome_plot}
-  \caption{Event-study plot for outcome}
-  \label{fig:overlayfhs1}
-\end{subfigure}%
-\begin{subfigure}{0.5\textwidth}
-  \centering
-  \includegraphics[width=0.9\linewidth]{\dir/output/analysis/fhps_iv_proxy_plot}
-  \caption{Event-study plot for proxy}
-  \label{fig:overlayfhs2}
-\end{subfigure}%
-
-\begin{subfigure}{0.5\textwidth}
-  \centering
-  \includegraphics[width=0.9\linewidth]{\dir/output/analysis/fhps_iv_proxy_outcome_plot}
-  \caption{Align proxy to outcome}
-  \label{fig:overlayfhs3}
-\end{subfigure}%
-\begin{subfigure}{0.5\textwidth}
-  \centering
-  \includegraphics[width=0.9\linewidth]{\dir/output/analysis/fhps_iv_subtraction_plot}
-  \caption{Subtract rescaled confound from outcome}
-  \label{fig:overlayfhs4}
-\end{subfigure}%
-
-\caption{Pre-trends adjustment using proxy variables for the confound following \cite{freyaldenhoven2019pre}}
-\label{fig:overlayfhs}
+	\centering
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{\dir/output/analysis/fhps_iv_outcome_plot}
+		\caption{Event-study plot for outcome}
+		\label{fig:overlayfhs1}
+	\end{subfigure}%
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{\dir/output/analysis/fhps_iv_proxy_plot}
+		\caption{Event-study plot for proxy}
+		\label{fig:overlayfhs2}
+	\end{subfigure}%
+	
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{\dir/output/analysis/fhps_iv_proxy_outcome_plot}
+		\caption{Align proxy to outcome}
+		\label{fig:overlayfhs3}
+	\end{subfigure}%
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{\dir/output/analysis/fhps_iv_subtraction_plot}
+		\caption{Subtract rescaled confound from outcome}
+		\label{fig:overlayfhs4}
+	\end{subfigure}%
+	
+	\caption{Pre-trends adjustment using proxy variables for the confound following \cite{freyaldenhoven2019pre}}
+	\label{fig:overlayfhs}
 \end{figure}
 
 
 \subsubsection*{Estimation with heterogeneous effects by cohort}
 
 \begin{sloppypar}
-\texttt{xtevent} allows estimation in settings with heterogeneous effects that vary by cohort using \citeauthor{sun2021estimating}'s (\citeyear{sun2021estimating}) estimator through the \texttt{cohort} and \texttt{control\_cohort} options.
+	\texttt{xtevent} allows estimation in settings with heterogeneous effects that vary by cohort using \citeauthor{sun2021estimating}'s (\citeyear{sun2021estimating}) estimator through the \texttt{cohort} and \texttt{control\_cohort} options.
 \end{sloppypar}
 In the \texttt{cohort} option, the user must specify the variable that identifies the cohorts, and in the \texttt{control\_cohort} option, the variable that identifies the cohort to use as the control group.
 In the following example, we first create the \texttt{time\_of\_treat} variable to identify the cohorts and then create the variable \texttt{last\_treat} to indicate the control group, which in this case are the last treated units.
 
 \begin{stlog}
-\input{\dir/output/analysis/fhps_SA_estimation_modified.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_SA_estimation_modified.log.tex}\nullskip
 \end{stlog}
 
 The output is analogous to standard \xtevent output.
@@ -684,7 +684,7 @@ The default plot type is \texttt{line}.
 With the additional suboptions \texttt{maxorder}, \texttt{maxiter}, and \texttt{technique}, we can control the maximum polynomial order for the confound path and the optimization process.
 
 \begin{stlog}
-\input{\dir/output/analysis/fhps_smpath_modified.log.tex}\nullskip
+	\input{\dir/output/analysis/fhps_smpath_modified.log.tex}\nullskip
 \end{stlog}
 
 In this case, the minimum polynomial order required to pass through the confidence region is of order 6.
@@ -693,11 +693,11 @@ If all of the dynamics of the estimated event-time path of the outcome variable 
 Such a confound path suggests that the estimated effects may be due to an effect of the policy and not to a confound.
 
 \begin{figure}[h!]
-\begin{center}
-\epsfig{file=\dir/output/analysis/fhps_smpath, width=.8\textwidth}
-\end{center}
-\caption{Least wiggly path through the confidence region}
-\label{fig:smpath}
+	\begin{center}
+		\epsfig{file=\dir/output/analysis/fhps_smpath, width=.8\textwidth}
+	\end{center}
+	\caption{Least wiggly path through the confidence region}
+	\label{fig:smpath}
 \end{figure}
 
 \subsection{Empirical application}\label{sec:app}
@@ -724,7 +724,7 @@ The parameters $\alpha_i$ and $\gamma_{t}$ represent canton and year fixed effec
 We start by loading the dataset, specifying the unit and time variables, and displaying some values of the dependent and policy variables around the treatment year:
 
 \begin{stlog}
-\input{\dir/output/analysis/martinez_load_data_rmpath.log.tex}\nullskip
+	\input{\dir/output/analysis/martinez_load_data_rmpath.log.tex}\nullskip
 \end{stlog}
 
 We now estimate equation \eqref{eq:martinez} to capture the dynamic effects of the reform on tax revenues.
@@ -735,26 +735,24 @@ Using \texttt{reghdfe} enables two-way clustered standard errors through the \te
 We also specify the imputation rule \texttt{stag} and add weights.
 
 \begin{stlog}
-\input{\dir/output/analysis/martinez_pretrend.log.tex}\nullskip
+	\input{\dir/output/analysis/martinez_pretrend.log.tex}\nullskip
 \end{stlog}
 
 We use \xteventplot to display an event-study plot.
 \xtevent allows for several options to modify the plot's  appearance.
-We modify the plot to suppress the sup-t confidence intervals and the p-values from overidentification tests.
+We modify the plot to suppress the sup-t confidence bands and the p-values from overidentification tests.
 We also change the colors and add axis titles.
 
 \begin{stlog}
-\input{\dir/output/analysis/martinez_plot.log.tex}\nullskip
+	\input{\dir/output/analysis/martinez_plot.log.tex}\nullskip
 \end{stlog}
 
-%Constantino 2024/01/24: I add a page break because figure 5 was splitting the stlog file, despite of using h!
-\clearpage
 \begin{figure}[h!]
-\begin{center}
-\includegraphics[width=0.9\textwidth]{\dir/output/analysis/martinez_plot}
-\end{center}
-\caption{Dynamic effect of a Swiss tax reform following \citet{martinez2022mobility}}
-\label{fig:martinez_default}
+	\begin{center}
+		\includegraphics[width=0.9\textwidth]{\dir/output/analysis/martinez_plot}
+	\end{center}
+	\caption{Dynamic effect of a Swiss tax reform following \citet{martinez2022mobility}}
+	\label{fig:martinez_default}
 \end{figure}
 
 Figure \ref{fig:martinez_default} indicates that the introduction of the regressive tax reform in Obwalden decreased its government's tax revenues (measured per capita and relative to the level in 2005).
@@ -766,13 +764,13 @@ We can use \texttt{xteventtest} to test for different hypotheses about the event
 For instance, we repeat the estimation with standard errors clustered by canton and use the \texttt{coefs} option to test if the coefficients for event times 0, 1, 2, and 3 are equal to zero jointly.
 
 \begin{stlog}
-\input{\dir/output/analysis/martinez_test_coefs.log.tex}\nullskip
+	\input{\dir/output/analysis/martinez_test_coefs.log.tex}\nullskip
 \end{stlog}
 The test indicates that the effects are different from zero.
 We can also test if the estimated policy effects are constant across time:
 
 \begin{stlog}
-\input{\dir/output/analysis/martinez_constanteff.log.tex}\nullskip
+	\input{\dir/output/analysis/martinez_constanteff.log.tex}\nullskip
 \end{stlog}
 
 This test suggests that the effects are not constant over time.
@@ -780,7 +778,7 @@ Last, we conduct an overidentification test to see if the effects level off.
 To do this, we ask \texttt{xteventtest} to use the last two post-event coefficients.
 
 \begin{stlog}
-\input{\dir/output/analysis/martinez_overidpost.log.tex}\nullskip
+	\input{\dir/output/analysis/martinez_overidpost.log.tex}\nullskip
 \end{stlog}
 
 This test suggests that the effects level off and that the number of post-event periods in the model may be sufficient to capture the dynamic effects of the policy.
