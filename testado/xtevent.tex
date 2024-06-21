@@ -1151,9 +1151,9 @@ Recovering $v^*_1$ using \eqref{eq:def_v1}, we obtain $v^*=[v^*_b, v^*_1,  v^*_2
 
 
 
-\section{The xtevent Package}
-\label{sec:package}
-The \xtevent package includes the commands \texttt{xtevent} for estimation, \texttt{xteventplot} for visualization, and \texttt{xteventtest} for postestimation hypothesis testing. It also includes \texttt{get\_unit\_time\_effects}, an auxiliary command to use in combination with \texttt{xtevent} in repeated cross-section settings. This appendix describes the syntax and options of each of these commands.
+\section{The xtevent Package}\label{sec:package}
+The \xtevent package includes the commands \texttt{xtevent} for estimation, \texttt{xteventplot} for visualization, and \texttt{xteventtest} for postestimation hypothesis testing.
+It also includes \texttt{get\_unit\_time\_effects}, an auxiliary command to use in combination with \texttt{xtevent} in repeated cross-section settings. This appendix describes the syntax and options of each of these commands.
 
 \subsection{The xtevent command}
 The \texttt{xtevent} command has the following syntax:
@@ -1173,10 +1173,10 @@ The \texttt{xtevent} command has the following syntax:
 	
 \end{stsyntax}
 
-
-
-
 \subsubsection{Options}
+
+\subsubsection{Main}
+
 \hangpara
 \texttt{policyvar(\varname)} specifies the policy variable of interest. \texttt{policyvar()} is required.
 
@@ -1188,10 +1188,25 @@ The \texttt{xtevent} command has the following syntax:
 \texttt{timevar(\varname)} specifies the time variable. \texttt{timevar()} is required if the data have not been previously \texttt{xtset}. See \texttt{xtset}.
 
 \hangpara
-{\tt window({\it numlist})} specifies the window around the policy change event to estimate dynamic effects. If a single positive integer $k>0$ is specified, the estimation will use a symmetric window of $k$ periods around the event.
-For example, if $k = 2$, there will be five coefficients in the window $\{-2,-1,0,1,2\}$ and two endpoints $\{-3+, 3+\}$.
-If two distinct integers, $k_1\le0$ and $k_2\ge0$, are specified, the estimation will use an asymmetric window with $k_1$ periods before the event and $k_2$ periods after the event.
-For example, with $k_1 = -1$ and $k_2 = 2$, there will be four coefficients in the window $\{-1,0,1,2\}$ and two endpoints $\{-2+,3+\}$.
+{\tt window({\it numlist})} specifies the window around the policy change event to estimate dynamic effects.
+
+\morehangpara
+{\tt window(k)} with a single positive integer $k>0$ uses a symmetric window of $k$ periods around the event.
+For example, if $k = 2$, there will be five coefficients in the window $(-2,-1,0,1,2)$ and two endpoints: $-3$ and $+3$.
+
+\morehangpara
+{\tt window(k1 k2)} with two distinct integers $k_1 \le 0$ and $k_2 \ge 0$ uses an asymmetric window with $k_1$ periods before the event and $k_2$ periods after the event.
+For example, with $k_1 = -1$ and $k_2 = 2$, there will be four coefficients in the window $(-1,0,1,2)$ and two endpoints: $-2$ and $+3$.
+
+\morehangpara
+{\tt window(max)} uses the largest possible window with the minimum and maximum event times in the estimation sample, accounting for the endpoints.
+{\tt window(max)} is only allowed if the policy follows staggered adoption and requires {\tt impute(stag)} or {\tt impute(instag)} to be specified (see below).
+
+\morehangpara
+{\tt window(balanced)} uses the largest possible window with the minimum and maximum event times in the estimation sample for which all cross sectional units have data.
+{\tt window(balanced)} is only allowed if the policy follows staggered adoption and requires {\tt impute(stag)} or {\tt impute(instag)} to be specified (see below).
+
+\hangpara
 {\tt window()} is required unless {\tt static} is specified, or if the estimation window is specified using options {\tt pre(), post(), overidpre()} and {\tt overidpost()} (See below).
 
 \hangpara
@@ -1203,7 +1218,7 @@ With {\tt window}, {\tt pre} is 0.
 
 \morehangpara
 {\tt post} is the number of post-event periods where policy effects are allowed.
-With {\tt window}, {\tt post} is the number of periods after the event (not including the period for the event, e.g., event time = 0), except the last two periods (assigned to {\tt overidpost} for the leveling off test).
+With {\tt window}, {\tt post} is the number of periods after the event (not including the period for the event, e.g., event time = 0), except the last two periods (assigned to {\tt overidpost} for the leveling-off test).
 
 \morehangpara
 {\tt overidpre} is the number of pre-event periods for an overidentification test of pre-trends. With {\tt window}, {\tt overidpre} is the number of periods before the event.
@@ -1215,25 +1230,70 @@ With {\tt window}, {\tt post} is the number of periods after the event (not incl
 Only one of {\tt window} or {\tt pre, post, overidpre} and {\tt overidpost} can be declared.
 
 \hangpara
+{\tt static} estimates a static panel data model and does not generate or plot event-time dummies.
+{\tt static} is not allowed with {\tt window}, {\tt pre}, {\tt post}, {\tt overidpre}, {\tt overidpost}, or {\tt diffavg}.
+
+\hangpara
+{\tt impute({\it type}, [{\it saveimp}]) }imputes leads, lags, and missing values in {\it policyvar} and uses this new variable as the actual {\it policyvar}.
+{\tt type} determines the imputation rule. The suboption {\tt saveimp} adds the new variable to the database as {\it policyvar\_imputed}.
+The following imputation types are available:
+
+\morehangpara
+{\tt impute(nuchange)} imputes missing values in {\it policyvar} according to {\it no unobserved change}: it assumes that for each unit: i) in periods before the first observed value, the policy value is the same as the first observed value and; ii) in periods after the last observed value, the policy value is the same as the last observed value.
+
+\morehangpara
+{\tt impute(stag)} applies {\it no unobserved change} if {\it policyvar} satisfies staggered-adoption assumptions for all units: i) {\it policyvar} must be binary, and ii) once {\it policyvar} reaches the adopted-policy state, it never reverts to the unadopted-policy state.
+See \citet{freyaldenhoven2021visualizationforth} for a detailed explanation of the staggered adoption case.
+
+\morehangpara
+{\tt impute(instag)} applies {\tt impute(stag)} and additionally imputes missing values inside the observed data range: a missing value or a group of them will be imputed only if they are both preceded and followed by the unadopted-policy state or by the adopted-policy state.
+See Appendix section \ref{sec:impute} in the online supplementary material for a detailed example of the {\tt impute} option.
+
+\hangpara
 {\tt norm({\it integer})} specifies the event-time coefficient to be normalized to 0. The default is to normalize the coefficient on -1.
 
 \hangpara
-{\tt proxy({\it varlist})} specifies proxy variables for the confound to be included.
+{\tt diffavg} calculates the difference in averages between the post-event estimated coefficients and the pre-event estimated coefficients.
+It also calculates its standard error with {\tt lincom}.
+{\tt diffavg} is not allowed with {\tt static}.
 
 \hangpara
-{\tt proxyiv({\it string})} specifies instruments for the proxy variable for the policy.
-{\tt proxyiv()} admits three syntaxes to use either leads of the policy variable or additional variables as instruments.
-The default is to use leads of the difference of the policy variable as instruments, selecting the lead with the strongest first stage.
+{\tt savek({\it stub} [,{\it subopt}])} saves variables for time-to-event, event-time, trend, and interaction variables.
+Event-time dummies are stored as {\it stub\_eq\_m\#} for the dummy variable {\it \#} periods before the policy change, and {\it stub\_eq\_p\#} for the dummy variable {\it \#} periods after the policy change.
+The dummy variable for the policy change time is {\it stub\_eq\_p0}.
+Event time is stored as {\it stub\_evtime}. The trend is stored as {\it stub\_trend}.
+For estimation with the \citet{sun2021estimating} method, such that {\tt cohort} and {\tt control\_cohort} or {\tt sunabraham} are active, the interaction variables are stored as {\it stub\_m\#\_c\#} or {\it stub\_p\#\_c\#}, where {\it c\#} indicates the cohort.
+The following suboptions can be specified:
 
 \morehangpara
-{\tt proxyiv(select)} selects the lead with the strongest first stage among all possible leads of the differenced policy variable to be used as an instrument.
-{\tt proxyiv(select)} is the default for the one proxy, one instrument case, and it is only available in this case.
+{\tt noestimate} saves variables for event-time dummies, event-time, and trends without estimating the model.
+This option is helpful if the users want to customize their regressions and plots.
 
 \morehangpara
-{\tt proxyiv(\# ...)} specifies a \textit{numlist} with the leads of the differenced policy variable as instruments. For example, {\tt proxyiv(1 2)} specifies that the first two leads of the difference of the policy variable will be used as instruments.
+{\tt saveinteract} saves interaction variables if {\tt cohort} and {\tt control\_cohort}, or {\tt sunabraham} are specified. {\tt noestimate} and {\tt saveinteract} cannot be specified simultaneously.
 
 \morehangpara
-{\tt proxyiv({\it varlist})} specifies a \textit{varlist} with the additional variables to be used as instruments.
+{\tt replace} replaces variables for time-to-event, event-time, trend, and interaction variables starting with \textit{stub}.
+
+\hangpara
+{\tt kvars(stub)} uses previously used event-time dummies saved with prefix \textit{stub}. This can be used to speed up estimation.
+
+\hangpara
+{\tt reghdfe} uses {\tt reghdfe} for estimation, instead of {\tt areg, ivregress}, and {\tt xtivreg}.
+{\tt reghdfe} is useful for large datasets.
+By default, it absorbs the panel fixed effects and the time fixed effects.
+For OLS estimation, the {\tt reghdfe} option requires {\tt reghdfe} and {\tt ftools} to be installed. For IV estimation, it also requires {\tt ivreghdfe} and {\tt ivreg2} to be installed.
+Note that standard errors may differ and singleton clusters may be dropped using {\tt reghdfe}.
+See \citet{Correia2017:HDFE}.
+
+\hangpara
+{\tt addabsorb({\it varlist})} specifies additional fixed effects to be absorbed when using {\tt reghdfe}.
+By default, {\tt xtevent} includes time and unit fixed effects.
+{\tt addabsorb} requires {\tt reghdfe}.
+
+\hangpara
+{\tt plot} displays a default event-study plot with standard confidence intervals and sup-t confidence bands \mbox{\citep{montiel2019simultaneous}}.
+Additional options are available with the postestimation command {\tt xteventplot}.
 
 \hangpara
 {\tt nofe} excludes panel fixed effects.
@@ -1242,26 +1302,31 @@ The default is to use leads of the difference of the policy variable as instrume
 {\tt note} excludes time fixed effects.
 
 \hangpara
-{\tt impute({\it type}, [{\it saveimp}]) }imputes missing values in {\it policyvar} and uses this new variable as the actual {\it policyvar}. {\tt type} determines the imputation rule. The suboption {\tt saveimp} adds the new variable to the database as {\it policyvar\_imputed}.
-The following imputation types are available:
+{\it additional\_options}: Additional options to be passed to the estimation command.
+When {\tt proxy} is specified, these options are passed to {\tt ivregress}.
+When {\tt reghdfe} is specified, these options are passed to {\tt reghdfe}.
+Otherwise, they are passed to {\tt areg} or to {\tt regress} if {\tt nofe} is specified.
+This option is useful for calculating clustered standard errors or changing regression reporting.
 
-\morehangpara
-{\tt impute(nuchange)} imputes missing values in {\it policyvar} according to {\it no unobserved change}: it assumes that for each unit: i) in periods before the first observed value, the policy value is the same as the first observed value and; ii) in periods after the last observed value, the policy value is the same as the last observed value.
-
-\morehangpara
-{\tt impute(stag)} applies {\it no unobserved change} if {\it policyvar} satisfies staggered-adoption assumptions for all units: i) {\it policyvar} must be binary, and ii) once {\it policyvar} reaches the adopted-policy state, it never reverts to the unadopted-policy state.
-See \citet{freyaldenhoven2021visualization} for a detailed explanation of the staggered adoption case.
-
-\morehangpara
-{\tt impute(instag)} applies {\tt impute(stag)} and additionally imputes missing values inside the observed data range: a missing value or a group of them will be imputed only if they are both preceded and followed by the unadopted-policy state or by the adopted-policy state.
+\subsubsection{Instrumental variable estimation with proxy variables \citep{freyaldenhoven2021visualizationforth}}
 
 \hangpara
-{\tt static} estimates a static panel data model and does not generate or plot event-time dummies.
-{\tt static} is not allowed with {\tt window}, {\tt pre}, {\tt post}, {\tt overidpre}, {\tt overidpost}, or {\tt diffavg}.
+{\tt proxyiv({\it proxyiv\_spec})} specifies instruments for the proxy variable for the policy.
+{\tt proxyiv()} admits three syntaxes to use either leads of the policy variable or additional variables as instruments.
+{\tt proxy} is not allowed with {\tt cohort},
+{\tt control\_cohort} or {\tt sunabraham}.
 
-\hangpara
-{\tt diffavg} calculates the difference in averages between the post-event estimated coefficients and the pre-event estimated coefficients periods.
-It also calculates its standard error with {\tt lincom}. {\tt diffavg} is not allowed with {\tt static}.
+\morehangpara
+{\tt proxyiv(select)} selects the lead with the strongest first stage among all possible leads of the differenced policy variable to be used as an instrument.
+{\tt proxyiv(select)} is the default for the one proxy, one instrument case, and it is only available in this case.
+
+\morehangpara
+{\tt proxyiv(\# ...)} specifies a \textit{numlist} with the leads of the differenced policy variable as instruments. For example, {\tt proxyiv(1 2)} specifies that the two first leads of the difference of the policy variable will be used as instruments.
+
+\morehangpara
+{\tt proxyiv({\it varlist})} specifies a \textit{varlist} with the additional variables to be used as instruments.
+
+\subsubsection{Controlling for event-time trends}
 
 \hangpara
 {\tt trend({\it \#1} [,{\it subopt}])} extrapolates a linear trend using the periods from period \#1 before the policy change to one period before the policy change, as in \citet{dobkin2018economic}.
@@ -1272,43 +1337,63 @@ The estimated effect of the policy is the deviation from the extrapolated linear
 The following can be passed as suboptions:
 
 \morehangpara
-{\tt method({\it string})} sets the method to estimate the linear trend. It can be Ordinary Least Squares ({\it ols}) or Generalized Method of Moments ({\it gmm}). ({\it ols}) omits the event-time dummies from trend({\it \#1}) to {\it -1} and adds a linear trend (\_ttrend) to the regression. ({\it gmm}) uses the GMM to compute the trend for the event-time dummy coefficients. The default is {\tt method({\it gmm})}.
+{\tt method({\it string})} sets the method to estimate the linear trend.
+It can be Ordinary Least Squares ({\it ols}) or Generalized Method of Moments ({\it gmm}).
+({\it ols}) omits the event-time dummies from trend({\it \#1}) to {\it -1} and adds a linear trend (\_ttrend) to the regression.
+({\it gmm}) uses the GMM to compute the trend for the event-time dummy coefficients.
+The default is {\tt method({\it gmm})}.
 
 \morehangpara
-{\tt saveoverlay} saves estimations for the overlay plot produced by
-{\tt xteventplot, overlay({\it trend})}.
-
-\hangpara
-{\tt savek({\it stub} [,{\it subopt}])} saves variables for time-to-event, event-time, trend, and interaction variables.
-Event-time dummies are stored as {\it stub\_eq\_m\#} for the dummy variable {\it \#} periods before the policy change, and {\it stub\_eq\_p\#} for the dummy variable {\it \#} periods after the policy change.
-The dummy variable for the policy change time is {\it stub\_eq\_p0}.
-Event time is stored as {\it stub\_evtime}. The trend is stored as {\it stub\_trend}.
-For estimation with the \citet{sun2021estimating} method, such that {\tt cohort} and {\tt control\_cohort} are active, the interaction variables are stored as {\it stub\_m\#\_c\#} or {\it stub\_p\#\_c\#}, where {\it c\#} indicates the cohort.
-The following suboptions can be specified:
+Note that the coefficients for negative-event time will differ between {\tt method(ols)} and {\tt method(gmm)}.
+{\tt method(ols)} omits the event-time coefficients used to calculate the trend, while {\tt method(gmm)} expresses them as differences from the estimated linear trend.
 
 \morehangpara
-{\tt noestimate} saves variables for event-time dummies, event-time, and trends without estimating the model.
-This option is helpful if the users want to customize their regressions and plots.
+{\tt saveoverlay} saves estimations for the overlay plot produced by {\tt xteventplot, overlay({\it trend})}.
+
+\subsubsection{Heterogeneous treatment effects \citep{sun2021estimating}}
+
+\hangpara
+{\tt cohort({\it cohort\_spec})} specifies how to identify the treatment cohorts used for estimation of heterogenous effects by cohort using the estimator from \cite{sun2021estimating}.
+{\tt cohort} requires the Stata module {\tt avar}.
 
 \morehangpara
-{\tt saveinteract} saves interaction variables if {\tt cohort} and {\tt control\_cohort} are specified. {\tt noestimate} and {\tt saveinteract} cannot be specified simultaneously.
+{\tt cohort(variable \textit{varname}},{\tt [,force])} specifies that the categorical variable {\tt varname} identifies each treatment cohort.
+By default, {\tt xtevent} checks for consistency of the cohort variable and the policy variable.
+{\tt force} forces {\tt xtevent} to
+skip this check.
+This can be useful when estimating heterogenous treatment effects across groups not defined by treatment cohorts.
+
+\morehangpara
+{\tt cohort(create},{\tt [,save replace]}) asks {\tt xtevent} to create the categorical treatment cohort variable based on values of the policy variable.
+{\tt save} adds the new cohort variable to the dataset as {\it policyvar\_cohort}.
+{\tt replace} replaces the cohort variable if it already exists.
+The automatic creation of the cohort variable is only available in the staggered adoption case.
 
 \hangpara
-{\tt usek({\it stub})} uses previously used event-time dummies saved with prefix {\it stub}.
-This option can be used to speed up estimation.
+{\tt control\_cohort(control\_cohort\_spec)} specifies how to identify the control cohort used for estimation of heterogenous effects by cohort using the estimator from \cite{sun2021estimating}.
+{\tt control\_cohort} requires {\tt cohort} to be specified.
+{\tt control\_cohort} is not allowed with {\tt proxy} or {\tt proxyiv}.
+
+\morehangpara
+{\tt control\_cohort(variable \textit{varname}},{\tt [,force])} specifies that the binary variable {\it varname} identifies the control cohort.
+By default, {\tt xtevent} checks for consistency of the control cohort variable and the policy variable.
+{\tt force} forces {\tt xtevent} to
+skip this check.
+This can be useful when estimating heterogenous treatment effects across groups not defined by treatment cohorts.
+
+\morehangpara
+{\tt control\_cohort(create},{\tt [,save replace]}) asks {\tt xtevent} to create the binary control cohort variable based on the missing values of
+the cohort variable.
+{\tt save} adds the new control cohort variable to the dataset as {\tt policyvar\_control\_cohort}.
+{\tt replace} replaces the control cohort variable if it already exists.
+{\tt control\_cohort(create)} is the default if {\tt cohort(create)} is specified but {\tt control\_cohort}
+is not specified.
 
 \hangpara
-{\tt reghdfe} uses {\tt reghdfe} for estimation, instead of {\tt areg, ivregress and  xtivreg}.
-{\tt reghdfe} is useful for large datasets.
-By default, it absorbs the panel fixed effects and the time fixed effects.
-For OLS estimation, the {\tt reghdfe} option requires {\tt reghdfe} and {\tt ftools} to be installed. For IV estimation, it also requires {\tt ivreghdfe} and {\tt ivreg2} to be installed.
-Standard errors may differ, and singleton clusters may be dropped using {\tt reghdfe}.
-See \citet{Correia2017:HDFE}.
+{\tt sunabraham} is a shorthand to specify estimation with heterogenous treatment effects by cohort using the estimator from \cite{sun2021estimating}.
+{\tt sunabraham} is equivalent to {\tt cohort(create)} and {\tt control\_cohort(create)}.
 
-\hangpara
-{\tt addabsorb({\it varlist})} specifies additional fixed effects to be absorbed when using {\tt reghdfe}.
-By default, {\tt xtevent} includes time and unit fixed effects.
-{\tt addabsorb} requires {\tt reghdfe}.
+\subsubsection{Estimation with repeated cross sectional data}
 
 \hangpara
 {\tt repeatedcs} indicates that the dataset in memory is repeated cross-sectional.
@@ -1318,25 +1403,6 @@ An alternative method to estimate the event study in a repeated cross-sectional 
 See the description of the {\tt get\_unit\_time\_effects} command below.
 For fixed-effects estimation, {\tt repeatedcs} enables {\tt reghdfe}.
 
-\hangpara
-{\tt cohort({\it varname})} specifies the variable that identifies the cohort for each unit.
-{\tt cohort} and {\tt control\_cohort} indicate {\tt xtevent} to estimate the event-time coefficients with the estimator of \citet{sun2021estimating} for settings with heterogeneous effects by cohort.
-{\tt cohort} requires the Stata module {\tt avar}.
-
-\hangpara
-{\tt control\_cohort({\it varname})} specifies the binary variable that identifies the control cohort. {\tt cohort} and {\tt control\_cohort} indicate {\tt xtevent} to estimate the event-time coefficients with the estimator of \citet{sun2021estimating} for settings with heterogeneous effects by cohort.
-{\tt control\_cohort} requires the Stata module {\tt avar}.
-
-\hangpara
-{\tt plot} displays a default event study plot with 95\% and sup-t confidence intervals. See \citet{montiel2019simultaneous}.  Additional options are available with the postestimation command {\tt xteventplot}.
-
-\hangpara
-{\it additional\_options}: Additional options to be passed to the estimation command.
-When {\tt proxy} is specified, these options are passed to {\tt ivregress}.
-When {\tt reghdfe} is specified, these options are passed to {\tt reghdfe}.
-Otherwise, they are passed to {\tt areg} or to {\tt regress} if {\tt nofe} is specified.
-This option is useful for calculating clustered standard errors or changing regression reporting.
-Note that two-way clustering is allowed with {\tt reghdfe}.
 
 \subsubsection{Saved Results}
 {\tt xtevent} saves the following in {\tt e()}:
@@ -1350,19 +1416,23 @@ Note that two-way clustering is allowed with {\tt reghdfe}.
 	\stresultsgroup{Macros} \\
 	\stcmd{e(names)} & names of the variables for the event-time dummies
 	\\
-	\stcmd{e(y1)} & mean of dependent variable et event-time = -1
+	\stcmd{e(y1)} & mean of dependent variable at event-time = -1
 	\\
 	\stcmd{e(x1)} & mean of proxy variable at event-time = -1, when only one proxy is specified
 	\\
 	\stcmd{e(trend)} & ``trend" if estimation included extrapolation of a linear trend
 	\\
-	\stcmd{e(cmd)} & estimation command: can be regress, areg, ivregress, xtivreg, or reghdfe
+	\stcmd{e(trendmethod)} & method used to estimate the linear trend: can be ``ols'' or ``gmm''
+	\\
+	\stcmd{e(cmd)} & estimation command: can be ``regress'', ``areg'', ``ivregress'', ``xtivreg'', or ``reghdfe''
 	\\
 	\stcmd{e(df)} & degrees of freedom
 	\\
 	\stcmd{e(komit)} & list of lags/leads omitted from regression
 	\\
 	\stcmd{e(kmiss)} & list of lags/leads to omit in the plot
+	\\
+	\stcmd{e(ambiguous)} & list of cross sectional units omitted because of ambiguous event times
 	\\
 	\stcmd{e(method)} & ``ols" or ``iv"
 	\\
@@ -1380,8 +1450,6 @@ Note that two-way clustering is allowed with {\tt reghdfe}.
 	\\
 	\stcmd{e(stub)} & prefix for saved event-time dummy variables
 	\\
-\end{stresults2}
-\begin{stresults2}
 	\stresultsgroup{Matrices} \\
 	\stcmd{e(b)} & coefficient vector
 	\\
@@ -1405,16 +1473,22 @@ Note that two-way clustering is allowed with {\tt reghdfe}.
 	\\
 	\stcmd{e(mattrendx)} & matrix with x-axis values of trend for overlay plot, only when \stcmd{ trend(\#1)} is specified
 	\\
-	\stcmd{e(Sigma\_ff)} & variance estimate of the cohort share estimators, only when \stcmd{cohort} and \stcmd{control\_cohort} are specified
+	\stcmd{e(b\_ir)} & each column vector contains estimates of each cohort-relative-time interaction and controls included in the interaction regression.
+	The interaction variables are named {\it \_interact\_m\#\_c\#} or{\it  \_interact\_p\#\_c\#}, where {\it m\#} indicates {\it \#} periods before the policy change, {\it p\#} indicates {\it \#} periods after the policy change, and {\it c\#} indicates the cohort.
+	Available only when {\tt cohort} and {\tt control\_cohort}, or {\tt sunabraham} are specified
 	\\
-	\stcmd{e(ff\_w)} & each column vector contains estimates of cohort shares underlying the given relative time, only when \stcmd{cohort} and \stcmd{control\_cohort} are specified
+	\stcmd{e(V\_ir)} & covariance matrix of the cohort-relative-time interactions and controls included in the interaction regression.
+	The interaction variables are named {\it \_interact\_m\#\_c\#} or {\it \_interact\_p\#\_c\#}, where {\it m\#} indicates {\it \#} periods before the policy change, {\it p\#} indicates {\it \#} periods after the policy change, and {\it c\#} indicates the cohort.
+	Available only when {\tt cohort} and {\tt control\_cohort}, or {\tt sunabraham} are specified
 	\\
-	\stcmd{e(V\_interact)} & each column vector contains variance estimate of the cohort-specific effect estimator for the given relative time, only when \stcmd{cohort} and \stcmd{control\_cohort} are specified
+	\stcmd{e(b\_interact)} & each column vector contains estimates of cohort-specific effect for the given relative time, only when \stcmd{cohort} and \stcmd{control\_cohort}, or {\tt opt sunabraham} are specified
 	\\
-	\stcmd{e(b\_interact)} & each column vector contains estimates of cohort-specific effect for the given relative time, only when \stcmd{cohort} and \stcmd{control\_cohort} are specified
+	\stcmd{e(V\_interact)} & each column vector contains variance estimate of the cohort-specific effect estimator for the given relative time, only when \stcmd{cohort} and \stcmd{control\_cohort}, or {\tt sunabraham} are specified
 	\\
-\end{stresults2}
-\begin{stresults2}
+	\stcmd{e(ff\_w)} & each column vector contains estimates of cohort shares underlying the given relative time, only when \stcmd{cohort} and \stcmd{control\_cohort}, or {\tt sunabraham} are specified
+	\\
+	\stcmd{e(Sigma\_ff)} & variance estimate of the cohort share estimators, only when \stcmd{cohort} and \stcmd{control\_cohort}, or {\tt sunabraham} are specified
+	\\
 	\stresultsgroup{Functions} \\
 	\stcmd{e(sample)} & marks estimation sample
 	\\
@@ -1430,8 +1504,7 @@ The \texttt{xteventplot} command produces event-study plots after \texttt{xteven
 \subsubsection{Options}
 \hangpara
 \sloppypar \noindent
-\texttt{suptreps({\it integer})} specifies the number of repetitions to calculate \citet{montiel2019simultaneous} sup-t confidence intervals for the dynamic effects. The default is 10000.
-
+\texttt{suptreps({\it integer})} specifies the number of repetitions to calculate \citet{montiel2019simultaneous} sup-t confidence bands for the dynamic effects. The default is 10000.
 
 \hangpara
 \texttt{overlay({\it string})} creates overlay plots for trend extrapolation, instrumental variables estimation in the presence of pre-trends, and constant policy effects over time.
@@ -1461,9 +1534,9 @@ These coefficients are calculated by
 
 \hangpara
 \texttt{levels({\it numlist})} customizes the confidence level for the confidence intervals in the event-study plot.
-By default, \texttt{xteventplot} draws two confidence intervals: a standard one and a sup-t confidence interval.
+By default, \texttt{xteventplot} draws a standard confidence interval and a sup-t confidence band.
 \texttt{levels} allows different confidence levels for standard confidence intervals.
-For example, \texttt{levels({\it 90 95})} draws both 90\% and 95\% level confidence intervals, along with a sup-t confidence interval for Stata's default confidence level.
+For example, \texttt{levels({\it 90 95})} draws both 90\% and 95\% level confidence intervals, along with a sup-t confidence band for Stata's default confidence level.
 
 \hangpara
 \texttt{smpath([{\it type, subopt}])} displays the ``least wiggly`` path through the Wald confidence region of the event-time coefficients.
@@ -1508,10 +1581,10 @@ See the \texttt{xteventtest} command below.
 The following options control the appearance of the plot:
 
 \hangpara
-\texttt{noci} omits the display and calculation of both Wald and sup-t confidence intervals. \texttt{noci} overrides \texttt{suptreps} if it is specified.  \texttt{noci} is not allowed with \texttt{smpath}.
+\texttt{noci} omits the display and calculation of both Wald and sup-t confidence band. \texttt{noci} overrides \texttt{suptreps} if it is specified.  \texttt{noci} is not allowed with \texttt{smpath}.
 
 \hangpara
-\texttt{nosupt} omits the display and calculation of sup-t confidence intervals. \texttt{nosupt} overrides \texttt{suptreps} if it is specified.
+\texttt{nosupt} omits the display and calculation of sup-t confidence bands. \texttt{nosupt} overrides \texttt{suptreps} if it is specified.
 
 \hangpara
 \texttt{nozeroline} omits the display of the reference line at {\it 0}. Note that reference lines with different styles can be obtained by removing the default line with \texttt{nozeroline} and adding other lines with \texttt{yline}. See \texttt{added\_line\_options}.
@@ -1535,7 +1608,7 @@ By default, this is a Wald test for the last post-event coefficients being equal
 These options are disabled if \texttt{noci} is specified.
 
 \hangpara
-\texttt{suptciplotopts} specifies options to be passed to \texttt{rcap} for the sup-t confidence interval plot.
+\texttt{suptciplotopts} specifies options to be passed to \texttt{rcap} for the sup-t confidence band plot.
 These options are disabled if \texttt{nosupt} is specified.
 
 \hangpara
@@ -1580,23 +1653,23 @@ The \texttt{xteventtest} command performs hypothesis testing after the \texttt{x
 
 \hangpara
 \texttt{allpre} tests that all pre-event coefficients are equal to {\it 0}.
-With \texttt{cumul}, it tests that the sum of all pre-event coefficients equals {\it 0}.
+With \texttt{cumul}, it tests that the sum of all pre-event coefficients is equal to {\it 0}.
 
 \hangpara
 \texttt{allpost} tests that all post-event coefficients are equal to {\it 0}.
-With \texttt{cumul}, it tests that the sum of all post-event coefficients equals {\it 0}.
+With \texttt{cumul}, it tests that the sum of all post-event coefficients is equal to {\it 0}.
 
 \hangpara
 \texttt{linpretrend} requests a specification test to see if the coefficients follow a linear trend before the event.
 
 \hangpara
-\texttt{trend({\it \#1})} tests for a linear trend from time period {\it \#1} before the policy change. It uses \texttt{xtevent, trend({\it \#1, method(ols)})} to estimate the trend. {\it \#1} must be less than {\it 0}.
+\texttt{trend({\it \#1})} tests for a linear trend from time period {\it \#1} before the policy change. It uses \texttt{xtevent, trend({\it \#1, method(ols)})} to estimate the trend. {\it \#1} must be less than {\it -1}.
 
 \hangpara
 \texttt{constanteff} tests that all post-event coefficients are equal.
 
 \hangpara
-\texttt{overid} tests overidentifying restrictions: a test for pre-trends and a test for effects leveling-off. The periods to be tested are those used in the \texttt{xtevent} call. See {\tt xtevent}.
+\texttt{overid} tests overidentifying restrictions: a test for pre-trends and a test for effects leveling-off. The periods to be tested are those used in the \texttt{xtevent} call.
 
 \hangpara
 \texttt{overidpre({\it \#1})} tests the pre-trends overidentifying restriction. It tests that the coefficients for the earliest {\it \#1} periods before the event are equal to {\it 0}, including the endpoints.
@@ -1648,7 +1721,7 @@ The variable {\it \_unittimeeffects} contains the group-time effects.
 The two-step procedure can be used to obtain the coefficient estimates of an event-study when the data is repeated cross-sectional.
 \texttt{get\_unit\_time\_effects} implements the first part of the two-step procedure.
 Then, \texttt{xtevent} can be used for the second part of the procedure to obtain the event-study coefficient estimates.
-See \texttt{xtevent} and Appendix \ref{sec:xsection}.
+See Appendix \ref{sec:xsection} in the online supplementary material.
 The syntax of the \texttt{get\_unit\_time\_effects} command is the following:
 
 \begin{stsyntax}
@@ -1682,7 +1755,6 @@ The suboption \texttt{replace} overwrites the unit-time effects file.
 
 \hangpara
 \texttt{clear} replaces the dataset in memory with the unit-time effects file.
-
 
 
 
