@@ -1151,6 +1151,142 @@ Recovering $v^*_1$ using \eqref{eq:def_v1}, we obtain $v^*=[v^*_b, v^*_1,  v^*_2
 
 
 
+
+\section{Estimation in repeated cross-sectional datasets}
+\label{sec:xsection}
+
+\texttt{xtevent} allows estimation with repeated cross-sectional datasets when \texttt{policyvar} varies at the group level, and \texttt{panelvar} identifies the groups.
+For instance, \texttt{panelvar} could indicate states at which \texttt{policyvar} changes, while the observations in the dataset should be individuals in each state.
+\texttt{xtevent} allows estimations in these settings directly with the \texttt{repeatedcs} option.
+It also allows for using the two step procedure described in \citet{hansen2007generalized}.
+To use the latter method, the user should first use the \texttt{get\_unit\_time\_effects} command to estimate unit-time effects and then use these estimations as input for \texttt{xtevent}.
+
+We illustrate the use of \texttt{get\_unit\_time\_effects}.
+First, we create a variable \texttt{state} that represents groups where individuals receive the treatment in the same period.
+Then, we call \texttt{get\_unit\_time\_effects}.
+It saves a \texttt{dta} file with the unit-time effects.
+
+\begin{stlog}
+\input{\dir/output/analysis/fhps_rcsection1_estimation_modified_rmpath.log.tex}\nullskip
+\end{stlog}
+
+Then, we keep one observation per state-time in the repeated cross-sectional data and merge the dataset with the unit-time effects.
+Afterwards, we execute \texttt{xtevent}.
+Since we use a smaller dataset to estimate the event-study, this method can be faster than using the \texttt{repeatedcs} option.
+
+\begin{stlog}
+\input{\dir/output/analysis/fhps_rcsection2_estimation_modified_rmpath.log.tex}\nullskip
+\end{stlog}
+
+\section{Policy variable imputation}
+\label{sec:impute}
+
+Panel event study estimation requires assumptions about the behavior of the policy variable outside the observed time range.
+In section \ref{sec:sim}, we estimated panel event studies assuming no unobserved changes in the policy variable outside the estimation period.
+This imputation scheme is implemented using the \texttt{impute(nuchange)} option.
+
+\xtevent allows for other schemes to impute the policy variable.
+For example, \xtevent can assume that the policy variable follows staggered adoption, using the \texttt{impute(stag)} option.
+It can also impute missing values of the policy variable inside the observed date range using the \texttt{impute(instag)} option.
+
+To illustrate these options, we use the simulated data example of section \ref{sec:examples} and show the implied event-time dummies under the different imputation schemes.
+For the example, we add some missing values to unit 19.
+Then, we differentiate the policy variable.
+\texttt{xtevent} uses leads and lags of the differentiated policy variable to generate the event-time dummies, following equation \eqref{eq:event_study_plot}.
+
+First, we ask \texttt{xtevent} to generate the event-time dummies without any imputation and specify the option \texttt{savek(stub, noestimate)} to save them without estimating the model.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_noestimate_rmpath.log.tex}\nullskip
+\end{stlog}
+
+The event-time dummies with a ``v'' prefix and ending in \texttt{m\#} or \texttt{p\#} correspond to leads and lags of the differentiated policy variable, as described in section \ref{sec:package}.
+Now, we display these event-time dummies for unit 19 in some periods.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_list_et_dummies.log.tex}\nullskip
+\end{stlog}
+
+Notice that the event-time dummies have missing values at the bottom of the table because we have not made any assumptions about the policy variable outside the observed time range.
+Besides, notice that the event-time dummies have some missing values inside the observed time range due to the missing value in the policy variable in period 35.
+From equation \eqref{eq:event_study_plot}, this latter missing value translates into two inner missing values in the event-time dummies and one missing value in the case of the left endpoint.
+
+To impute the policy variable under staggered adoption, we use the \texttt{impute(stag)} option.
+\xtevent verifies that the policy variable follows staggered adoption.
+If so, \xtevent imputes the policy variable outside the observed time range.
+Then, it uses the imputed policy variable to generate the event-time dummies and endpoints.
+We add the suboption \texttt{saveimp} to save the imputed policy variable as \texttt{z\_imputed}.
+We also differentiate the new imputed policy variable to see how its leads and lags translate to new event-time dummies.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_dummies_with_imputation.log.tex}\nullskip
+\end{stlog}
+
+Below, we compare the original policy variable, the imputed policy variable, the differentiated imputed policy variable, some event-time dummies, and the left endpoint generated using the imputed policy variable.
+First, the policy variable has been imputed in the observed time range.
+Nonetheless, the imputation also assumes that the policy variable in periods after $t=40$ would have the same value as the one in that last period.
+This imputation can be seen in the event-time dummies, which now have zeros corresponding to leads of the differentiated policy variable in periods after 40.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_list_et_dummies_imputation.log.tex}\nullskip
+\end{stlog}
+
+We now ask \texttt{xtevent} to impute the policy variable using the \texttt{impute(instag)} option.
+This imputation scheme lets us impute missing values in the policy variable outside and inside the observed time range.
+As described in section \ref{sec:package}, the \texttt{impute(instag)} option implements the \texttt{impute(stag)} option, but it also imputes missing values inside the observed time range in cases where it is possible to assume some value based on the policy values in surrounding periods.
+As in the previous example, we also generate the differentiated imputed policy variable for comparison.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_dummies_with_imputation_instag.log.tex}\nullskip
+\end{stlog}
+
+Below, we compare the original policy variable, the imputed policy variable, the differentiated imputed policy variable, some event-time dummies, and the left endpoint generated with the imputed policy variable.
+First, the imputed policy variable does not have missing values inside or outside the event-time range.
+As in the example using \texttt{impute(stag)}, the event-time dummies have zeros corresponding to leads of the differentiated policy variable in periods greater than 40. Additionally, now the event-time dummies do not have missing values inside the event-time range.
+
+\begin{stlog}
+	\input{\dir/output/analysis/fhps_list_et_dummies_imputation_instag.log.tex}\nullskip
+\end{stlog}
+
+\section{Estimation with heterogenous treatment effects in staggered adoption settings}
+\label{sec:sunabraham}
+
+\xtevent allows estimation robust to heterogeneous treatment effects in staggered adoption settings using the approach of \cite{sun2021estimating}.
+Following \cite{freyaldenhoven2021visualization}, we introduce a setting with heterogeneous treatment effects across treatment cohorts as follows:
+let $t^{\star} (i)$ be the cohort for unit $i$, namely, the period when unit $i$ adopts the policy.
+Denote the effects of the policy on the outcome for cohort $t^{\star}$ as $\left\{ \beta_{m,t^{\star}} \right\}_{m=-G}^M$.
+The equation for the outcome becomes:
+
+\begin{equation*}
+y_{it} =  \alpha_{i} + \gamma_{t} + q_{it}'\psi  + \sum_{m=-G}^{M}\beta_{m,t^{\star}(i)} z_{i,t-m} + C_{it} + \varepsilon_{it}.
+\end{equation*}
+
+To estimate the event-study path of the outcome in this setting, \xtevent estimates an extended version of equation \eqref{eq:event_study_plot} interacting the event-time dummies with cohort indicators:
+
+\begin{equation}
+    \begin{split}
+        y_{it} = \sum_{c} \sum_{k=-G-L_G}^{M+L_M -1} \left(  \mathbf{1}\left\{ t^{\star} (i) = c \right\} \right) \left( \delta_{k,c} \Delta  z_{i,t-k} + \delta_{M+L_M,c} z_{i,t-M-L_M} + \delta_{-G-L_G-1,c}(1-z_{i,t+G+L_G}) \right)
+        \\ \centering
+        + \alpha_{i} + \gamma_{t} + q'_{it}\psi + C_{it} + \varepsilon_{it},
+    \end{split}
+    \label{eq:sunabraham}
+\end{equation}
+
+\xtevent estimates this equation on a sample defined by the \texttt{cohort} and \texttt{control\_cohort} options.
+If the cohort in \texttt{control\_cohort} is a never-treated cohort, \xtevent estimates equation \eqref{eq:sunabraham} in the whole sample.
+Otherwise, \xtevent estimates \eqref{eq:sunabraham} in the subset of periods when observations in the control cohort have not yet been treated.
+By default, the estimation excludes always-treated cohorts.
+
+After obtaining estimates $\hat{\delta}_{k,c}$ for $k=-G-L_G-1,...,M+L_M$ and for each cohort $c$, \xtevent obtains the estimate of the average treatment effect at event-time $k$ for , $\hat{\delta}_k$, as an average of the $\hat{\delta}_{k,c}$ estimates weighting by the share of observations from cohort $c$ in each relative time $k$.
+
+\begin{equation*}
+  \hat{\delta}_k = \sum_c \delta_{k,c} \hat{Pr} \left\{ t^{\star}(i) = c \ | \ t^{\star}(i) \in [c,T-c] \right\}
+\end{equation*}
+
+The variance of $\hat{\delta}_k$ is obtained using the formulas in Appendix C.1 of \cite{sun2021estimating}.
+
+
+
 \section{The xtevent Package}\label{sec:package}
 The \xtevent package includes the commands \texttt{xtevent} for estimation, \texttt{xteventplot} for visualization, and \texttt{xteventtest} for postestimation hypothesis testing.
 It also includes \texttt{get\_unit\_time\_effects}, an auxiliary command to use in combination with \texttt{xtevent} in repeated cross-section settings. This appendix describes the syntax and options of each of these commands.
@@ -1758,137 +1894,5 @@ The suboption \texttt{replace} overwrites the unit-time effects file.
 
 
 
-\section{Estimation in repeated cross-sectional datasets}
-\label{sec:xsection}
-
-\texttt{xtevent} allows estimation with repeated cross-sectional datasets when \texttt{policyvar} varies at the group level, and \texttt{panelvar} identifies the groups.
-For instance, \texttt{panelvar} could indicate states at which \texttt{policyvar} changes, while the observations in the dataset should be individuals in each state.
-\texttt{xtevent} allows estimations in these settings directly with the \texttt{repeatedcs} option.
-It also allows for using the two step procedure described in \citet{hansen2007generalized}.
-To use the latter method, the user should first use the \texttt{get\_unit\_time\_effects} command to estimate unit-time effects and then use these estimations as input for \texttt{xtevent}.
-
-We illustrate the use of \texttt{get\_unit\_time\_effects}.
-First, we create a variable \texttt{state} that represents groups where individuals receive the treatment in the same period.
-Then, we call \texttt{get\_unit\_time\_effects}.
-It saves a \texttt{dta} file with the unit-time effects.
-
-\begin{stlog}
-\input{\dir/output/analysis/fhps_rcsection1_estimation_modified_rmpath.log.tex}\nullskip
-\end{stlog}
-
-Then, we keep one observation per state-time in the repeated cross-sectional data and merge the dataset with the unit-time effects.
-Afterwards, we execute \texttt{xtevent}.
-Since we use a smaller dataset to estimate the event-study, this method can be faster than using the \texttt{repeatedcs} option.
-
-\begin{stlog}
-\input{\dir/output/analysis/fhps_rcsection2_estimation_modified_rmpath.log.tex}\nullskip
-\end{stlog}
-
-\section{Policy variable imputation}
-\label{sec:impute}
-
-Panel event study estimation requires assumptions about the behavior of the policy variable outside the observed time range.
-In section \ref{sec:sim}, we estimated panel event studies assuming no unobserved changes in the policy variable outside the estimation period.
-This imputation scheme is implemented using the \texttt{impute(nuchange)} option.
-
-\xtevent allows for other schemes to impute the policy variable.
-For example, \xtevent can assume that the policy variable follows staggered adoption, using the \texttt{impute(stag)} option.
-It can also impute missing values of the policy variable inside the observed date range using the \texttt{impute(instag)} option.
-
-To illustrate these options, we use the simulated data example of section \ref{sec:examples} and show the implied event-time dummies under the different imputation schemes.
-For the example, we add some missing values to unit 19.
-Then, we differentiate the policy variable.
-\texttt{xtevent} uses leads and lags of the differentiated policy variable to generate the event-time dummies, following equation \eqref{eq:event_study_plot}.
-
-First, we ask \texttt{xtevent} to generate the event-time dummies without any imputation and specify the option \texttt{savek(stub, noestimate)} to save them without estimating the model.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_noestimate_rmpath.log.tex}\nullskip
-\end{stlog}
-
-The event-time dummies with a ``v'' prefix and ending in \texttt{m\#} or \texttt{p\#} correspond to leads and lags of the differentiated policy variable, as described in section \ref{sec:package}.
-Now, we display these event-time dummies for unit 19 in some periods.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_list_et_dummies.log.tex}\nullskip
-\end{stlog}
-
-Notice that the event-time dummies have missing values at the bottom of the table because we have not made any assumptions about the policy variable outside the observed time range.
-Besides, notice that the event-time dummies have some missing values inside the observed time range due to the missing value in the policy variable in period 35.
-From equation \eqref{eq:event_study_plot}, this latter missing value translates into two inner missing values in the event-time dummies and one missing value in the case of the left endpoint.
-
-To impute the policy variable under staggered adoption, we use the \texttt{impute(stag)} option.
-\xtevent verifies that the policy variable follows staggered adoption.
-If so, \xtevent imputes the policy variable outside the observed time range.
-Then, it uses the imputed policy variable to generate the event-time dummies and endpoints.
-We add the suboption \texttt{saveimp} to save the imputed policy variable as \texttt{z\_imputed}.
-We also differentiate the new imputed policy variable to see how its leads and lags translate to new event-time dummies.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_dummies_with_imputation.log.tex}\nullskip
-\end{stlog}
-
-Below, we compare the original policy variable, the imputed policy variable, the differentiated imputed policy variable, some event-time dummies, and the left endpoint generated using the imputed policy variable.
-First, the policy variable has been imputed in the observed time range.
-Nonetheless, the imputation also assumes that the policy variable in periods after $t=40$ would have the same value as the one in that last period.
-This imputation can be seen in the event-time dummies, which now have zeros corresponding to leads of the differentiated policy variable in periods after 40.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_list_et_dummies_imputation.log.tex}\nullskip
-\end{stlog}
-
-We now ask \texttt{xtevent} to impute the policy variable using the \texttt{impute(instag)} option.
-This imputation scheme lets us impute missing values in the policy variable outside and inside the observed time range.
-As described in section \ref{sec:package}, the \texttt{impute(instag)} option implements the \texttt{impute(stag)} option, but it also imputes missing values inside the observed time range in cases where it is possible to assume some value based on the policy values in surrounding periods.
-As in the previous example, we also generate the differentiated imputed policy variable for comparison.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_dummies_with_imputation_instag.log.tex}\nullskip
-\end{stlog}
-
-Below, we compare the original policy variable, the imputed policy variable, the differentiated imputed policy variable, some event-time dummies, and the left endpoint generated with the imputed policy variable.
-First, the imputed policy variable does not have missing values inside or outside the event-time range.
-As in the example using \texttt{impute(stag)}, the event-time dummies have zeros corresponding to leads of the differentiated policy variable in periods greater than 40. Additionally, now the event-time dummies do not have missing values inside the event-time range.
-
-\begin{stlog}
-	\input{\dir/output/analysis/fhps_list_et_dummies_imputation_instag.log.tex}\nullskip
-\end{stlog}
-
-\section{Estimation with heterogenous treatment effects in staggered adoption settings}
-\label{sec:sunabraham}
-
-\xtevent allows estimation robust to heterogeneous treatment effects in staggered adoption settings using the approach of \cite{sun2021estimating}.
-Following \cite{freyaldenhoven2021visualization}, we introduce a setting with heterogeneous treatment effects across treatment cohorts as follows:
-let $t^{\star} (i)$ be the cohort for unit $i$, namely, the period when unit $i$ adopts the policy.
-Denote the effects of the policy on the outcome for cohort $t^{\star}$ as $\left\{ \beta_{m,t^{\star}} \right\}_{m=-G}^M$.
-The equation for the outcome becomes:
-
-\begin{equation*}
-y_{it} =  \alpha_{i} + \gamma_{t} + q_{it}'\psi  + \sum_{m=-G}^{M}\beta_{m,t^{\star}(i)} z_{i,t-m} + C_{it} + \varepsilon_{it}.
-\end{equation*}
-
-To estimate the event-study path of the outcome in this setting, \xtevent estimates an extended version of equation \eqref{eq:event_study_plot} interacting the event-time dummies with cohort indicators:
-
-\begin{equation}
-    \begin{split}
-        y_{it} = \sum_{c} \sum_{k=-G-L_G}^{M+L_M -1} \left(  \mathbf{1}\left\{ t^{\star} (i) = c \right\} \right) \left( \delta_{k,c} \Delta  z_{i,t-k} + \delta_{M+L_M,c} z_{i,t-M-L_M} + \delta_{-G-L_G-1,c}(1-z_{i,t+G+L_G}) \right)
-        \\ \centering
-        + \alpha_{i} + \gamma_{t} + q'_{it}\psi + C_{it} + \varepsilon_{it},
-    \end{split}
-    \label{eq:sunabraham}
-\end{equation}
-
-\xtevent estimates this equation on a sample defined by the \texttt{cohort} and \texttt{control\_cohort} options.
-If the cohort in \texttt{control\_cohort} is a never-treated cohort, \xtevent estimates equation \eqref{eq:sunabraham} in the whole sample.
-Otherwise, \xtevent estimates \eqref{eq:sunabraham} in the subset of periods when observations in the control cohort have not yet been treated.
-By default, the estimation excludes always-treated cohorts.
-
-After obtaining estimates $\hat{\delta}_{k,c}$ for $k=-G-L_G-1,...,M+L_M$ and for each cohort $c$, \xtevent obtains the estimate of the average treatment effect at event-time $k$ for , $\hat{\delta}_k$, as an average of the $\hat{\delta}_{k,c}$ estimates weighting by the share of observations from cohort $c$ in each relative time $k$.
-
-\begin{equation*}
-  \hat{\delta}_k = \sum_c \delta_{k,c} \hat{Pr} \left\{ t^{\star}(i) = c \ | \ t^{\star}(i) \in [c,T-c] \right\}
-\end{equation*}
-
-The variance of $\hat{\delta}_k$ is obtained using the formulas in Appendix C.1 of \cite{sun2021estimating}.
 \end{document}
 % END: main.tex
