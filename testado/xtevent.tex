@@ -319,8 +319,9 @@ Our package incorporates one such procedure as an option if the policy indeed fo
 
 
 In the following section, we briefly discuss several estimation strategies for \eqref{eq:event_study_plot}, provide more details on constructing the corresponding event-study plots, and introduce some additional features of the \xtevent package.
-Then, in section \ref{sec:package}, we give a more detailed description of the syntax and options for the \xtevent package.
-In section \ref{sec:examples}, we illustrate usage of the package in simulated data from \citet{freyaldenhoven2021visualizationforth} and by estimating the effect of a tax reform using data from \citet{martinez2022mobility}. An appendix in the online supplementary material includes additional details on the implementation and functionality of the package.
+In section \ref{sec:examples}, we illustrate usage of the package in simulated data from \citet{freyaldenhoven2021visualizationforth} and by estimating the effect of a tax reform using data from \citet{martinez2022mobility}. 
+Then, in the appendix, we give a more detailed description of the syntax and options for the \xtevent package.
+The appendix also includes additional details on the implementation and functionality of the package.
 
 %%%%%%%%%%%%%% Section 2: methods %%%%%%%%%%%%%
 
@@ -372,7 +373,7 @@ Let $T_G \leq L_G$ be the number of periods prior to $G$ used to estimate the tr
 We assume $f_k \neq 0$ for $k \in \left[-G-T_G,T_M \right]$ and $0$ otherwise.
 We can recover the trend parameters by using the $T_G$ moment conditions $\widehat{d}_k - \phi' f_k = 0$ for $k = -G - T_G,\ldots,-G-1$.
 We can then calculate an adjusted estimated event-time path $\widehat{\delta}$ that accounts for the confound by subtracting $\phi' f_k$ from the unadjusted coefficients $d_k$ for $k \in \left[-G-T_G,T_M\right]$.
-Appendix \ref{sec:app_trend} in the online supplementary material provides further details about this estimator.
+Appendix \ref{sec:app_trend} provides further details about this estimator.
 
 \noindent \textbf{IV estimation with multiple proxies.}
 If multiple additional variables are available that may serve as proxies for the confound $C_{it}$, such that
@@ -408,7 +409,7 @@ More generally, the label corresponds to the value $$\frac{\sum_{(i,t): \Delta z
 \begin{sloppypar}
 	\noindent \textbf{Uniform inference.}
 	In addition to standard pointwise confidence intervals for the coefficients $\delta_k$, \xtevent allows plots of uniform sup-t confidence bands \citep{freyberger2018uniform,montiel2019simultaneous}.
-	Including these bands allows for visual tests of hypotheses about the entire coefficient path instead of just single coefficients. We provide details about the calculation of sup-t confidence bands in Appendix \ref{sec:sup-t} in the online supplementary material.
+	Including these bands allows for visual tests of hypotheses about the entire coefficient path instead of just single coefficients. We provide details about the calculation of sup-t confidence bands in Appendix \ref{sec:sup-t}.
 \end{sloppypar}
 
 \noindent \textbf{Overidentification and testing.}
@@ -424,7 +425,7 @@ To help visualize whether a confound can plausibly explain all of the event time
 Our choice of ``most plausible'' confound is the least ``wiggly'' polynomial in event-time that passes through the Wald confidence region of the event-time path.
 The idea is that if a ``smooth'' path exists, this suggests that a confound could plausibly explain the entire event time path of the outcome, even absent any policy effects.
 On the other hand, if no ``smooth'' path exists, this may indicate that a confound cannot plausibly explain the entire event-time path of the outcome and, therefore, that the policy does affect the outcome.
-We describe the computation of the least wiggly path in detail in Appendix \ref{sec:smoothest_path} in the online supplementary material.
+We describe the computation of the least wiggly path in detail in Appendix \ref{sec:smoothest_path}.
 
 \noindent \textbf{Overlay plots.}
 \xteventplot allows event-study plots with overlays in different estimation scenarios. For estimation with event-time trends, \xteventplot creates plots overlaying the trend.
@@ -450,7 +451,7 @@ However, the user may have additional information that allows imputation of the 
 		\item Automatically impute any missing values in the policy variable \textit{outside} the observed data range, assuming no policy changes outside the sample period.
 		For example, if we observe $z_{jt}=1$, under staggered adoption, this implies that $z_{js}=1$ for $s>t$.
 		We provide an example of this functionality in section \ref{sec:examples_basic}.
-		\item Automatically impute missing values of the policy variable \textit{inside} the observed data range. For example, if $z_{jt} = 1$ and $z_{j,t+2} = 1$, under staggered adoption, this implies that $z_{j,t+1} = 1$. We provide examples of this functionality in Appendix \ref{sec:impute} in the online supplementary material.
+		\item Automatically impute missing values of the policy variable \textit{inside} the observed data range. For example, if $z_{jt} = 1$ and $z_{j,t+2} = 1$, under staggered adoption, this implies that $z_{j,t+1} = 1$. We provide examples of this functionality in Appendix \ref{sec:impute}.
 	\end{enumerate}
 	\item
 	Even absent staggered adoption, if the policy variable is declared not to change values outside the observed sample, \xtevent can automatically impute $z_{it}$ outside the observed sample.
@@ -470,7 +471,7 @@ where the parameters $\alpha_{s(i)}$ are fixed effects corresponding to state $s
 
 An alternative \citep{amemiya1978note, hansen2007generalized} is to regress $y_{it}$ on a set of state-time indicators, plus any control variables $q_{it}$ that vary at the individual level, and then estimate \eqref{eq:event_study_plot} with the estimated state-time effects as dependent variables, and including state fixed effects, time fixed effects, and controls that vary at the state level.
 The auxiliary command \texttt{get\_unit\_time\_effects} facilitates this approach.
-We provide an example of this command's usage in Appendix \ref{sec:xsection} in the online supplementary material.
+We provide an example of this command's usage in Appendix \ref{sec:xsection}.
 
 \textbf{Heterogeneous treatment effects in staggered adoption settings.} The model in equation \eqref{eq:linear} assumes that the causal effect of the policy is homogeneous over units $i$.
 Recent literature has highlighted that if treatment effects are heterogeneous by treatment time, then the effects estimated with equation \eqref{eq:linear} may not be properly-weighted averages of the cohort-level treatment effects \citep{athey2022design,callaway2021difference,goodman2021difference,sun2021estimating}.
@@ -523,7 +524,7 @@ To estimate a basic panel event study with dynamic effects of policy variable \t
 The \texttt{panelvar} and \texttt{timevar} options indicate the cross-sectional and time dimensions of the dataset.
 The \texttt{window} option specifies the event-time periods to include.
 By specifying the \texttt{impute(nuchange)} option, we ask \xtevent to assume that the policy does not change outside the estimation window and to impute the leads and lags of the policy variable accordingly.
-We discuss alternative imputation schemes in Appendix \ref{sec:impute} in the online supplementary material.
+We discuss alternative imputation schemes in Appendix \ref{sec:impute}.
 
 \xtevent automatically creates event-time dummies for event-times -5 to 5, denoted by \texttt{\_k\_eq\_m5},\texttt{\_k\_eq\_m4},...,\texttt{\_k\_eq\_p5}, plus endpoint dummies for event-times $\leq -6$ and $\geq 6$ (\texttt{\_k\_eq\_m6,\_k\_eq\_p6}) and includes them as independent variables.
 The normalized coefficient for event-time = -1 is omitted.
@@ -920,7 +921,7 @@ See \citet{freyaldenhoven2021visualizationforth} for a detailed explanation of t
 
 \morehangpara
 {\tt impute(instag)} applies {\tt impute(stag)} and additionally imputes missing values inside the observed data range: a missing value or a group of them will be imputed only if they are both preceded and followed by the unadopted-policy state or by the adopted-policy state.
-See Appendix section \ref{sec:impute} in the online supplementary material for a detailed example of the {\tt impute} option.
+See Appendix section \ref{sec:impute} for a detailed example of the {\tt impute} option.
 
 \hangpara
 {\tt norm({\it integer})} specifies the event-time coefficient to be normalized to 0. The default is to normalize the coefficient on -1.
@@ -1394,7 +1395,7 @@ The variable {\it \_unittimeeffects} contains the group-time effects.
 The two-step procedure can be used to obtain the coefficient estimates of an event-study when the data is repeated cross-sectional.
 \texttt{get\_unit\_time\_effects} implements the first part of the two-step procedure.
 Then, \texttt{xtevent} can be used for the second part of the procedure to obtain the event-study coefficient estimates.
-See Appendix \ref{sec:xsection} in the online supplementary material.
+See Appendix \ref{sec:xsection}.
 The syntax of the \texttt{get\_unit\_time\_effects} command is the following:
 
 \begin{stsyntax}
