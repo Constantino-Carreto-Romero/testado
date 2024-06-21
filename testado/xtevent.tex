@@ -1149,35 +1149,6 @@ At this point, we have both $v^*_2$ and $v^*_b$.
 Recovering $v^*_1$ using \eqref{eq:def_v1}, we obtain $v^*=[v^*_b, v^*_1,  v^*_2]$.
 
 
-
-
-
-\section{Estimation in repeated cross-sectional datasets}
-\label{sec:xsection}
-
-\texttt{xtevent} allows estimation with repeated cross-sectional datasets when \texttt{policyvar} varies at the group level, and \texttt{panelvar} identifies the groups.
-For instance, \texttt{panelvar} could indicate states at which \texttt{policyvar} changes, while the observations in the dataset should be individuals in each state.
-\texttt{xtevent} allows estimations in these settings directly with the \texttt{repeatedcs} option.
-It also allows for using the two step procedure described in \citet{hansen2007generalized}.
-To use the latter method, the user should first use the \texttt{get\_unit\_time\_effects} command to estimate unit-time effects and then use these estimations as input for \texttt{xtevent}.
-
-We illustrate the use of \texttt{get\_unit\_time\_effects}.
-First, we create a variable \texttt{state} that represents groups where individuals receive the treatment in the same period.
-Then, we call \texttt{get\_unit\_time\_effects}.
-It saves a \texttt{dta} file with the unit-time effects.
-
-\begin{stlog}
-\input{\dir/output/analysis/fhps_rcsection1_estimation_modified_rmpath.log.tex}\nullskip
-\end{stlog}
-
-Then, we keep one observation per state-time in the repeated cross-sectional data and merge the dataset with the unit-time effects.
-Afterwards, we execute \texttt{xtevent}.
-Since we use a smaller dataset to estimate the event-study, this method can be faster than using the \texttt{repeatedcs} option.
-
-\begin{stlog}
-\input{\dir/output/analysis/fhps_rcsection2_estimation_modified_rmpath.log.tex}\nullskip
-\end{stlog}
-
 \section{Policy variable imputation}
 \label{sec:impute}
 
@@ -1247,6 +1218,35 @@ As in the example using \texttt{impute(stag)}, the event-time dummies have zeros
 \begin{stlog}
 	\input{\dir/output/analysis/fhps_list_et_dummies_imputation_instag.log.tex}\nullskip
 \end{stlog}
+
+
+
+\section{Estimation in repeated cross-sectional datasets}
+\label{sec:xsection}
+
+\texttt{xtevent} allows estimation with repeated cross-sectional datasets when \texttt{policyvar} varies at the group level, and \texttt{panelvar} identifies the groups.
+For instance, \texttt{panelvar} could indicate states at which \texttt{policyvar} changes, while the observations in the dataset should be individuals in each state.
+\texttt{xtevent} allows estimations in these settings directly with the \texttt{repeatedcs} option.
+It also allows for using the two step procedure described in \citet{hansen2007generalized}.
+To use the latter method, the user should first use the \texttt{get\_unit\_time\_effects} command to estimate unit-time effects and then use these estimations as input for \texttt{xtevent}.
+
+We illustrate the use of \texttt{get\_unit\_time\_effects}.
+First, we create a variable \texttt{state} that represents groups where individuals receive the treatment in the same period.
+Then, we call \texttt{get\_unit\_time\_effects}.
+It saves a \texttt{dta} file with the unit-time effects.
+
+\begin{stlog}
+\input{\dir/output/analysis/fhps_rcsection1_estimation_modified_rmpath.log.tex}\nullskip
+\end{stlog}
+
+Then, we keep one observation per state-time in the repeated cross-sectional data and merge the dataset with the unit-time effects.
+Afterwards, we execute \texttt{xtevent}.
+Since we use a smaller dataset to estimate the event-study, this method can be faster than using the \texttt{repeatedcs} option.
+
+\begin{stlog}
+\input{\dir/output/analysis/fhps_rcsection2_estimation_modified_rmpath.log.tex}\nullskip
+\end{stlog}
+
 
 \section{Estimation with heterogenous treatment effects in staggered adoption settings}
 \label{sec:sunabraham}
